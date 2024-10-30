@@ -1,18 +1,23 @@
+import sys
+
 class Restaurant:
-    def __init__(self, table):
-        self.__table = table
+    def __init__(self):
+        self.table = []
+        for i in range (1,21):
+            self.table.append(Table(i))
 
     def ouvrir(self):
-        pass
+        main()
 
     def fermer(self):
-        pass
+        sys.exit("Fermeture du restaurant")
 
     def calcul_stat(self,nbr):
         pass
 
+
 class Table:
-    def __init__(self, nbr_place, num_table, etat_table, num_commande):
+    def __init__(self, num_table, nbr_place=4, etat_table="libre", num_commande=None):
         self.__nbr_place = nbr_place
         self.__num_table = num_table
         self.__etat_table = etat_table
@@ -71,3 +76,12 @@ class Plat:
 class Statistique:
     def __init__(self):
         pass
+
+
+
+def main():
+    print("okay")
+    print(Fourchette.table)
+
+Fourchette = Restaurant()
+#Fourchette.ouvrir()
