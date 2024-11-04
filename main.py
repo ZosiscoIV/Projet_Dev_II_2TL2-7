@@ -4,7 +4,7 @@ class Restaurant:
     def __init__(self):
         self.table = []
         for i in range (1,21):
-            self.table.append(Table(i))
+            self.table.append(Table(i,self.table))
 
     def ouvrir(self):
         main()
@@ -17,14 +17,19 @@ class Restaurant:
 
 
 class Table:
-    def __init__(self, num_table, nbr_place=4, etat_table="libre", num_commande=None):
+    def __init__(self, num_table,tables, nbr_place=4, etat_table="libre", num_commande=None):
         self.__nbr_place = nbr_place
+        self.tables = tables
         self.__num_table = num_table
-        self.__etat_table = etat_table
+        self.etat_table = etat_table
         self.__num_commande = num_commande
 
     def regrouper_table(self, *table):
         pass
+
+    def changer_etat_table(self, etat):
+        self.etat_table = etat
+
 
 
 class Reservation:
@@ -85,3 +90,5 @@ def main():
 
 Fourchette = Restaurant()
 #Fourchette.ouvrir()
+Fourchette.table[0].changer_etat_table("occupe")
+print(Fourchette.table[0].etat_table)
