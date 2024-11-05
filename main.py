@@ -51,9 +51,9 @@ class Table:
         self.table_merged = []
 
 
-    # def changer_etat_table(self, etat):
-    #     if etat != "libre":
-    #         self.etat_table = etat
+    def changer_etat_table(self, etat):
+        # if etat != "libre":
+        self.etat_table = etat
 
 
 
