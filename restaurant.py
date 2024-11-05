@@ -4,10 +4,10 @@ class Restaurant:
     def __init__(self):
         self.table = []
         self.table_libre = {}
-        for i in range (1,21):
+        for i in range (0,21):
             new_table = Table(i)
-            self.table.append(new_table) # [Table(1),Table(2), ...]
-            self.table_libre[i] = new_table # {1:Table(1),2:Table(2), ...}
+            self.table.append(new_table) # [Table(0),Table(1), ...]
+            self.table_libre[i] = new_table # {0:Table(0),1:Table(1), ...}
 
     def ouvrir(self):
         pass
