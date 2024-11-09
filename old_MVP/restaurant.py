@@ -1,5 +1,6 @@
 import sys
 from table import Table
+
 class Restaurant:
     def __init__(self):
         self.table = []

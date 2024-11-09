@@ -1,7 +1,9 @@
 from restaurant import Restaurant
-from old_MVP.client import Client
+from table import Table
+from reservation import Reservation
+from commande import Commande
+from client import Client
 from plat import Plat
-
 
 
 
