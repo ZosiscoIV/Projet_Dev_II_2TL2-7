@@ -1,5 +1,5 @@
 class Table:
-    def __init__(self, num_table, nbr_place=4, etat_table="libre", num_commande=None):
+    def __init__(self, num_table, nbr_place=4, etat_table="L", num_commande=None):
         self._nbr_place = nbr_place
         self._num_table = num_table
         self._etat_table = etat_table
@@ -24,7 +24,7 @@ class Table:
 
     @etat_table.setter
     def etat_table(self, etat):
-        if etat in ["libre", "occupe", "nettoyage", "fusionne"]:
+        if etat in ["O", "L", "N", "R", "F"]:
             self._etat_table = etat
         else:
             raise ValueError("L'état de la table doit être 'libre', 'occupe' ou 'fusionne'")
