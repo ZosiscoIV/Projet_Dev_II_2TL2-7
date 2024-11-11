@@ -85,60 +85,68 @@ while True:
         else:
             commande = tables[numero_table-1].commande
 
-        # Demande à l'utilisateur ce qu'il veut faire
-        demande = int(input("1) Ajouter plat 2) Retirer plat 3) Afficher la commande \n "))
+        while True:
+            # Demande à l'utilisateur ce qu'il veut faire
+            demande = int(input("1) Ajouter plat 2) Retirer plat 3) Afficher la commande 4) Retour \n "))
+            while demande not in [1,2,3,4]:
+                demande = input("Action invalie, entrez une autre action\n")
 
-        # Ajouter un plat dans la commande
-        if demande == 1:
-            # Chaine de tous les plats présents dans menu
-            string_menu = ""
-            for i in range(len(menu)):
-                string_menu += str(i + 1) + ") " + menu[i]["nom"] + " "
+            # Ajouter un plat dans la commande
+            if demande == 1:
+                # Chaine de tous les plats présents dans menu
+                string_menu = ""
+                for i in range(len(menu)):
+                    string_menu += str(i + 1) + ") " + menu[i]["nom"] + " "
+                print("Menu : " + string_menu)
+                while True:
+                    # Choix du plat
+                    plat = input("Entrez un numéro de plat ou 'stop' pour arrêter\n ")
+                    # Vérification du numéro du plat choisi
+                    if plat == "stop":
+                        break
+                    while int(plat) <= 0 or int(plat) > len(menu):
+                        plat = input("Entrez un numéro valide de plat ou 'stop' pour arrêter\n ")
+                    if plat == "stop":
+                        break
+                    # Ajouter le plat à la commande
+                    plat_a_ajouter = menu[int(plat) - 1]
+                    commande.ajouter_plat(
+                        Plat(plat_a_ajouter["nom"], plat_a_ajouter["liste_ingredients"], plat_a_ajouter["prix"]))
+                    print(f"Le plat {plat_a_ajouter["nom"]} à été ajouté")
 
-            plat = None
-            while plat != "stop":
-                # Choix du plat
-                plat = input("Entrez un plat : " + string_menu + "ou 'stop' pour arrêter\n ")
-                # Vérification du numéro du plat choisi
-                if plat == "stop":
-                    break
-                while int(plat) <= 0 or int(plat) > len(menu):
-                    plat = input("Entrez à nouveau le plat choisi : " + string_menu + "\n ")
-                if plat == "stop":
-                    break
-                # Ajouter le plat à la commande
-                plat_a_ajouter = menu[int(plat) - 1]
-                commande.ajouter_plat(
-                    Plat(plat_a_ajouter["nom"], plat_a_ajouter["liste_ingredients"], plat_a_ajouter["prix"]))
+            # Retirer un plat dans Commande
+            elif demande == 2:
+                plats_commandes = commande.plats
+                if len(plats_commandes) >= 1:
+                    string_plats_commandes = ""
+                    for i in range(len(plats_commandes)):
+                        string_plats_commandes += str(i + 1) + ") " + plats_commandes[i].nom + " "
+                    # Choix du plat à retirer
+                    plat_a_retirer = int(input("Entrez un plat à retirer : " + string_plats_commandes + "\n "))
+                    # Vérification du numéro du plat choisi
+                    while plat_a_retirer <= 0 or plat_a_retirer > len(plats_commandes):
+                        plat_a_retirer = int(input("Entrez à nouveau le plat à retirer : " + string_plats_commandes + "\n "))
+                    commande.retirer_plat(plat_a_retirer-1)
+                else:
+                    print("Pas de plat à retirer dans la commande")
 
 
-        # Retirer un plat dans Commande
-        elif demande == 2:
-            plats_commandes = commande.plats
-            if len(plats_commandes) >= 1:
-                string_plats_commandes = ""
-                for i in range(len(plats_commandes)):
-                    string_plats_commandes += str(i + 1) + ") " + plats_commandes[i].nom + " "
-                # Choix du plat à retirer
-                plat_a_retirer = int(input("Entrez un plat à retirer : " + string_plats_commandes + "\n "))
-                # Vérification du numéro du plat choisi
-                while plat_a_retirer <= 0 or plat_a_retirer > len(plats_commandes):
-                    plat_a_retirer = int(input("Entrez à nouveau le plat à retirer : " + string_plats_commandes + "\n "))
-                commande.retirer_plat(plat_a_retirer-1)
+            # Afficher la commande
+            elif demande == 3:
+                plats_commandes = commande.plats
+                if len(plats_commandes) >= 1:
+                    string_plats_commandes = f"Commande n°{commande.num_commande} : "
+                    for i in range(len(plats_commandes)):
+                        string_plats_commandes += str(i + 1) + ") " + plats_commandes[i].nom + " "
+                    print(string_plats_commandes)
+                else:
+                    print("Pas de plats dans la commande")
+
+            elif demande == 4:
+                break
+
             else:
-                print("Pas de plat à retirer dans la commande")
-
-
-        # Afficher la commande
-        elif demande == 3:
-            plats_commandes = commande.plats
-            if len(plats_commandes) >= 1:
-                string_plats_commandes = ""
-                for i in range(len(plats_commandes)):
-                    string_plats_commandes += str(i + 1) + ") " + plats_commandes[i].nom + " "
-                print(string_plats_commandes)
-            else:
-                print("Pas de plats dans la commande")
+                print("Erreur dans la commande")
 
 
 
