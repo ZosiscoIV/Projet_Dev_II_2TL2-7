@@ -25,16 +25,19 @@ for i in range(1, 21):
 
 # Choix de la table
 def choix_table():
-    num = int(input("Entrez un numéro de table : "))
+    num = input("Entrez un numéro de table : ")
     # Vérification que le numéro de table est valide
-    while num <= 0 or num > 20:
-        num = int(input("Numéro invalie, entrez un autre numéro de table : "))
-    return num
+    while int(num) <= 0 or int(num) > 20:
+        num = input("Numéro invalie, entrez un autre numéro de table : ")
+    return int(num)
 
 # Boucle principale pour interagir avec l'utilisateur
 while True:
     # Affichage des options et choix de l'action par l'utilisateur
-    action = int(input("1) Changer état table 2) Voir toutes les tables 3) Créer une commande \n"))
+    action = input("1) Changer état table 2) Voir toutes les tables 3) Créer une commande \n")
+    while int(action) not in [1, 2, 3]:
+        action = input("Action invalie, entrez une autre action\n")
+    action = int(action)
 
     if action == 1:
         numero_table = choix_table()
@@ -43,10 +46,10 @@ while True:
         table_a_changer = tables[numero_table-1]
         nouvel_etat_table = input("Choisissez l'état : O-occupé, L-libre, N-nettoyage, R-réservé, F-fusionné \n")
         # Vérification que l'état est valide
-        while nouvel_etat_table not in ["O", "L", "N", "R", "F"]:
+        while nouvel_etat_table.upper() not in ["O", "L", "N", "R", "F"]:
             nouvel_etat_table = input("Etat invalie, entrez un autre état : O-occupé, L-libre, N-nettoyage, R-réservé, F-fusionné \n")
 
-        table_a_changer.etat_table = nouvel_etat_table
+        table_a_changer.etat_table = nouvel_etat_table.upper()
 
     # Affiche les tables avec les couleurs en fonction de leur état
     elif action == 2:
@@ -87,10 +90,10 @@ while True:
 
         while True:
             # Demande à l'utilisateur ce qu'il veut faire
-            demande = int(input("1) Ajouter plat 2) Retirer plat 3) Afficher la commande 4) Retour \n "))
-            while demande not in [1,2,3,4]:
+            demande = input("1) Ajouter plat 2) Retirer plat 3) Afficher la commande 4) Retour \n ")
+            while int(demande) not in [1,2,3,4]:
                 demande = input("Action invalie, entrez une autre action\n")
-
+            demande = int(demande)
             # Ajouter un plat dans la commande
             if demande == 1:
                 # Chaine de tous les plats présents dans menu
@@ -102,11 +105,11 @@ while True:
                     # Choix du plat
                     plat = input("Entrez un numéro de plat ou 'stop' pour arrêter\n ")
                     # Vérification du numéro du plat choisi
-                    if plat == "stop":
+                    if plat.lower() == "stop":
                         break
                     while int(plat) <= 0 or int(plat) > len(menu):
                         plat = input("Entrez un numéro valide de plat ou 'stop' pour arrêter\n ")
-                    if plat == "stop":
+                    if plat.lower() == "stop":
                         break
                     # Ajouter le plat à la commande
                     plat_a_ajouter = menu[int(plat) - 1]
