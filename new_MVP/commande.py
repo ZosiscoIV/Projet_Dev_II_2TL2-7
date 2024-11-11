@@ -26,5 +26,5 @@ class Commande:
     def ajouter_plat(self,plat):
         self._plats.append(plat)
 
-    def retirer_plat(self,plat):
-        self._plats.remove(plat)
+    def retirer_plat(self,index_plat):
+        self._plats.pop(index_plat)

@@ -95,19 +95,39 @@ while True:
             for i in range(len(menu)):
                 string_menu += str(i + 1) + ") " + menu[i]["nom"] + " "
 
-            # Choix du plat
-            plat = int(input("Entrez un plat : " + string_menu  + "\n "))
-            # Vérification du numéro du plat choisi
-            while plat not in [1,2,3]:
-                plat = int(input("Entrez à nouveau le plat choisi : " + string_menu + "\n "))
+            plat = None
+            while plat != "stop":
+                # Choix du plat
+                plat = input("Entrez un plat : " + string_menu + "ou 'stop' pour arrêter\n ")
+                # Vérification du numéro du plat choisi
+                if plat == "stop":
+                    break
+                while int(plat) <= 0 or int(plat) > len(menu):
+                    plat = input("Entrez à nouveau le plat choisi : " + string_menu + "\n ")
+                if plat == "stop":
+                    break
+                # Ajouter le plat à la commande
+                plat_a_ajouter = menu[int(plat) - 1]
+                commande.ajouter_plat(
+                    Plat(plat_a_ajouter["nom"], plat_a_ajouter["liste_ingredients"], plat_a_ajouter["prix"]))
 
-            # Ajouter le plat à la commande
-            plat_a_ajouter = menu[plat - 1]
-            commande.ajouter_plat(Plat(plat_a_ajouter["nom"],plat_a_ajouter["liste_ingredients"],plat_a_ajouter["prix"]))
 
         # Retirer un plat dans Commande
         elif demande == 2:
-            print(commande.plats)
+            plats_commandes = commande.plats
+            if len(plats_commandes) >= 1:
+                string_plats_commandes = ""
+                for i in range(len(plats_commandes)):
+                    string_plats_commandes += str(i + 1) + ") " + plats_commandes[i].nom + " "
+                # Choix du plat à retirer
+                plat_a_retirer = int(input("Entrez un plat à retirer : " + string_plats_commandes + "\n "))
+                # Vérification du numéro du plat choisi
+                while plat_a_retirer <= 0 or plat_a_retirer > len(plats_commandes):
+                    plat_a_retirer = int(input("Entrez à nouveau le plat à retirer : " + string_plats_commandes + "\n "))
+                commande.retirer_plat(plat_a_retirer-1)
+            else:
+                print("Pas de plat à retirer dans la commande")
+
 
         #Changer l'etat de la commande
         elif demande == 3:
