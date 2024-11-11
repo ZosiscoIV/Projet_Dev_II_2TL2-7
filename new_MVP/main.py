@@ -86,7 +86,7 @@ while True:
             commande = tables[numero_table-1].commande
 
         # Demande à l'utilisateur ce qu'il veut faire
-        demande = int(input("1) Entrer plat 2) Retirer plat 3) Changer état commande \n "))
+        demande = int(input("1) Ajouter plat 2) Retirer plat 3) Afficher la commande \n "))
 
         # Ajouter un plat dans la commande
         if demande == 1:
@@ -129,13 +129,16 @@ while True:
                 print("Pas de plat à retirer dans la commande")
 
 
-        #Changer l'etat de la commande
+        # Afficher la commande
         elif demande == 3:
-            pass
-
-
-
-
+            plats_commandes = commande.plats
+            if len(plats_commandes) >= 1:
+                string_plats_commandes = ""
+                for i in range(len(plats_commandes)):
+                    string_plats_commandes += str(i + 1) + ") " + plats_commandes[i].nom + " "
+                print(string_plats_commandes)
+            else:
+                print("Pas de plats dans la commande")
 
 
 
