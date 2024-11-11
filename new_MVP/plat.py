@@ -1,5 +1,5 @@
 class Plat:
-    def __init__(self, nom, liste_ingredients, prix, etat_plat="commande"):
+    def __init__(self, nom, liste_ingredients, prix, etat_plat="C"):
         self._nom = nom
         self._liste_ingredients = liste_ingredients
         self._prix = prix

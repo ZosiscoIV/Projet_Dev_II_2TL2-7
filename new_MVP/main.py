@@ -7,14 +7,12 @@ from plat import Plat
 
 # Liste pour stocker les tables
 tables = []
-# tables_libres = []
-# tables_occupees = []
-# tables_nettoyage = []
-# tables_reservees = []
-# tables_fusionnees = []
 
+
+# Compteur pour le numero de commande
 compteur_commande = 1
 
+# Acces au fichier nemu.json
 with open('menu.json', 'r') as file:
     menu = json.load(file)
     print(menu)
@@ -25,8 +23,8 @@ for i in range(1, 21):
     table = Table(i)
     tables.append(table)
 
+# Choix de la table
 def choix_table():
-    # Choix de la table à changer son état
     num = int(input("Entrez un numéro de table : "))
     # Vérification que le numéro de table est valide
     while num <= 0 or num > 20:
@@ -50,7 +48,7 @@ while True:
 
         table_a_changer.etat_table = nouvel_etat_table
 
-    # affiche les tables avec les couleurs en fonction de leur état
+    # Affiche les tables avec les couleurs en fonction de leur état
     elif action == 2:
         tables_a_afficher = []
         for i in tables:
@@ -73,30 +71,47 @@ while True:
         str_tables_a_afficher = str_tables_a_afficher[:-2]
         print(str_tables_a_afficher)
 
-    # Non implémenté
+    # Créer une commande
     elif action == 3:
+        # Obtenir le numéro de table auquel il faut associer la commande
         numero_table = choix_table()
+
+        # Créer la Commande au numéro de table si elle n'existe pas ou la récupérer
         if tables[numero_table-1].commande is None:
             commande = Commande(compteur_commande)
             tables[numero_table-1].commande = commande
+            # Augmenter le compteur du numéro de commande
+            compteur_commande += 1
         else:
             commande = tables[numero_table-1].commande
 
+        # Demande à l'utilisateur ce qu'il veut faire
         demande = int(input("1) Entrer plat 2) Retirer plat 3) Changer état commande \n "))
 
+        # Ajouter un plat dans la commande
         if demande == 1:
-            string = ""
+            # Chaine de tous les plats présents dans menu
+            string_menu = ""
             for i in range(len(menu)):
-                string += str(i + 1) + ") " + menu[i]["nom"] + " "
+                string_menu += str(i + 1) + ") " + menu[i]["nom"] + " "
 
-            plat = int(input("Entrez un plat : " + string  + "\n "))
+            # Choix du plat
+            plat = int(input("Entrez un plat : " + string_menu  + "\n "))
+            # Vérification du numéro du plat choisi
             while plat not in [1,2,3]:
-                plat = int(input("Entrez à nouveau le plat choisi : 1) Bolo 2) Pizza 3) Steak"))
+                plat = int(input("Entrez à nouveau le plat choisi : " + string_menu + "\n "))
+
+            # Ajouter le plat à la commande
             plat_a_ajouter = menu[plat - 1]
             commande.ajouter_plat(Plat(plat_a_ajouter["nom"],plat_a_ajouter["liste_ingredients"],plat_a_ajouter["prix"]))
 
+        # Retirer un plat dans Commande
         elif demande == 2:
             print(commande.plats)
+
+        #Changer l'etat de la commande
+        elif demande == 3:
+            pass
 
 
 
