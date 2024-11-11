@@ -1,0 +1,17 @@
+[
+  {
+    "nom": "Bolo",
+    "liste_ingredients": ["Pate", "Bolo", "Persil"],
+    "prix": 12.5
+  },
+  {
+    "nom": "Pizza",
+    "liste_ingredients": ["Pate","Tomate", "Fromage", "Jambon"],
+    "prix": 9.7
+  },
+  {
+    "nom": "Steak",
+    "liste_ingredients": ["Steak", "Frites", "Salade", "Archiduc"],
+    "prix": 27.1
+  }
+]

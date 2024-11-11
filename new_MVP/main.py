@@ -1,3 +1,5 @@
+import json
+
 from table import Table
 from commande import Commande
 from plat import Plat
@@ -11,22 +13,33 @@ tables = []
 # tables_reservees = []
 # tables_fusionnees = []
 
+compteur_commande = 1
+
+with open('menu.json', 'r') as file:
+    menu = json.load(file)
+    print(menu)
+
+
 # Initialisation de 20 tables (numérotées de 1 à 20) comme libres
 for i in range(1, 21):
     table = Table(i)
     tables.append(table)
 
+def choix_table():
+    # Choix de la table à changer son état
+    num = int(input("Entrez un numéro de table : "))
+    # Vérification que le numéro de table est valide
+    while num <= 0 or num > 20:
+        num = int(input("Numéro invalie, entrez un autre numéro de table : "))
+    return num
+
 # Boucle principale pour interagir avec l'utilisateur
 while True:
     # Affichage des options et choix de l'action par l'utilisateur
-    action = int(input("1) Changer état table 2) Voir toutes les tables 3) à venir \n"))
+    action = int(input("1) Changer état table 2) Voir toutes les tables 3) Créer une commande \n"))
 
     if action == 1:
-        # Choix de la table à changer son état
-        numero_table = int(input("Entrez un numéro de table : "))
-        # Vérification que le numéro de table est valide
-        while numero_table <= 0 or numero_table > 20:
-            numero_table = int(input("Numéro invalie, entrez un autre numéro de table : "))
+        numero_table = choix_table()
 
         # Choix de l'état de la table choisie et le changer
         table_a_changer = tables[numero_table-1]
@@ -62,7 +75,35 @@ while True:
 
     # Non implémenté
     elif action == 3:
-        pass
+        numero_table = choix_table()
+        if tables[numero_table-1].commande is None:
+            commande = Commande(compteur_commande)
+            tables[numero_table-1].commande = commande
+        else:
+            commande = tables[numero_table-1].commande
+
+        demande = int(input("1) Entrer plat 2) Retirer plat 3) Changer état commande \n "))
+
+        if demande == 1:
+            string = ""
+            for i in range(len(menu)):
+                string += str(i + 1) + ") " + menu[i]["nom"] + " "
+
+            plat = int(input("Entrez un plat : " + string  + "\n "))
+            while plat not in [1,2,3]:
+                plat = int(input("Entrez à nouveau le plat choisi : 1) Bolo 2) Pizza 3) Steak"))
+            plat_a_ajouter = menu[plat - 1]
+            commande.ajouter_plat(Plat(plat_a_ajouter["nom"],plat_a_ajouter["liste_ingredients"],plat_a_ajouter["prix"]))
+
+        elif demande == 2:
+            print(commande.plats)
+
+
+
+
+
+
+
     # Cas ou l'action n'est pas une option valide
     else:
         print("Action invalide")

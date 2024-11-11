@@ -1,9 +1,9 @@
 class Table:
-    def __init__(self, num_table, nbr_place=4, etat_table="L", num_commande=None):
+    def __init__(self, num_table, nbr_place=4, etat_table="L", commande=None):
         self._nbr_place = nbr_place
         self._num_table = num_table
         self._etat_table = etat_table
-        self._num_commande = num_commande
+        self._commande = commande
         self._table_merged = [] # Tables fusionnées avec la Table en question
 
     @property
@@ -27,7 +27,7 @@ class Table:
         if etat in ["O", "L", "N", "R", "F"]:
             self._etat_table = etat
         else:
-            raise ValueError("L'état de la table doit être 'libre', 'occupe' ou 'fusionne'")
+            raise ValueError("L'état de la table doit être O-occupé, L-libre, N-nettoyage, R-réservé, F-fusionné")
 
     # Getter pour _num_table (pas de setter car il ne devrait pas être modifié)
     @property
@@ -36,12 +36,12 @@ class Table:
 
     # Getter et Setter pour _num_commande
     @property
-    def num_commande(self):
-        return self._num_commande
+    def commande(self):
+        return self._commande
 
-    @num_commande.setter
-    def num_commande(self, commande):
-        self._num_commande = commande
+    @commande.setter
+    def commande(self, new_commande):
+        self._commande = new_commande
 
     def regrouper_table(self, *table):
         plus_petit_num_table = self # Table avec le plus petit num_table
