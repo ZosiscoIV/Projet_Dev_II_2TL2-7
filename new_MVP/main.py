@@ -27,7 +27,7 @@ for i in range(1, 21):
 def choix_table():
     num = input("Entrez un numéro de table : ")
     # Vérification que le numéro de table est valide
-    while int(num) <= 0 or int(num) > 20:
+    while not num.isdigit() or (int(num) <= 0 or int(num) > 20):
         num = input("Numéro invalie, entrez un autre numéro de table : ")
     return int(num)
 
@@ -35,7 +35,7 @@ def choix_table():
 while True:
     # Affichage des options et choix de l'action par l'utilisateur
     action = input("1) Changer état table 2) Voir toutes les tables 3) Créer une commande \n")
-    while int(action) not in [1, 2, 3]:
+    while action not in ["1", "2", "3"]:
         action = input("Action invalie, entrez une autre action\n")
     action = int(action)
 
@@ -91,7 +91,7 @@ while True:
         while True:
             # Demande à l'utilisateur ce qu'il veut faire
             demande = input("1) Ajouter plat 2) Retirer plat 3) Afficher la commande 4) Retour \n ")
-            while int(demande) not in [1,2,3,4]:
+            while demande not in ["1","2","3","4"]:
                 demande = input("Action invalie, entrez une autre action\n")
             demande = int(demande)
             # Ajouter un plat dans la commande
@@ -107,8 +107,10 @@ while True:
                     # Vérification du numéro du plat choisi
                     if plat.lower() == "stop":
                         break
-                    while int(plat) <= 0 or int(plat) > len(menu):
+                    while not plat.isdigit() or (int(plat) <= 0 or int(plat) > len(menu)):
                         plat = input("Entrez un numéro valide de plat ou 'stop' pour arrêter\n ")
+                        if plat.lower() == "stop":
+                            break
                     if plat.lower() == "stop":
                         break
                     # Ajouter le plat à la commande
@@ -125,11 +127,11 @@ while True:
                     for i in range(len(plats_commandes)):
                         string_plats_commandes += str(i + 1) + ") " + plats_commandes[i].nom + " "
                     # Choix du plat à retirer
-                    plat_a_retirer = int(input("Entrez un plat à retirer : " + string_plats_commandes + "\n "))
+                    plat_a_retirer = input("Entrez un plat à retirer : " + string_plats_commandes + "\n ")
                     # Vérification du numéro du plat choisi
-                    while plat_a_retirer <= 0 or plat_a_retirer > len(plats_commandes):
-                        plat_a_retirer = int(input("Entrez à nouveau le plat à retirer : " + string_plats_commandes + "\n "))
-                    commande.retirer_plat(plat_a_retirer-1)
+                    while not plat_a_retirer.isdigit() or (int(plat_a_retirer) <= 0 or int(plat_a_retirer) > len(plats_commandes)):
+                        plat_a_retirer = input("Entrez à nouveau le plat à retirer : " + string_plats_commandes + "\n ")
+                    commande.retirer_plat(int(plat_a_retirer)-1)
                 else:
                     print("Pas de plat à retirer dans la commande")
 
