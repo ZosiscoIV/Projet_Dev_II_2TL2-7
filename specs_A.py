@@ -8,6 +8,18 @@ def etat_commande(self):
     """
     return self._etat_commande
 
+def etat_commande(self, etat):
+    """
+    Modifie l'état de la commande.
+
+    PRE : etat doit être une chaîne de caractères valide ('C' ou 'P').
+    POST : Modifie l'état de la commande en fonction de la valeur donnée.
+    """
+    if etat in ["C", "P"]:
+        self._etat_commande = etat
+    else:
+        raise ValueError("L'état de la commande doit être 'C-commandée' ou 'P-prête'.")
+
 
 #2
 def ajouter_plat(self, plat):
@@ -42,6 +54,18 @@ def etat_plat(self):
     POST : Retourne l'état actuel du plat ('C' pour Commandé, 'P' pour Préparé, 'S' pour Servi).
     """
     return self._etat_plat
+
+def etat_plat(self, etat):
+    """
+    Modifie l'état du plat.
+
+    PRE : etat doit être une chaîne de caractères valide ('C' pour Commandé, 'P' pour Préparé, 'S' pour Servi).
+    POST : Modifie l'état du plat en fonction de la valeur donnée.
+    """
+    if etat in ["C", "P", "S"]:
+        self._etat_plat = etat
+    else:
+        raise ValueError("L'état du plat doit être 'C-commandé', 'P-préparé' ou 'S-servi'.")
 
 #5
 def regrouper_table(self, *table):
