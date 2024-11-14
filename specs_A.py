@@ -1,34 +1,12 @@
 #1
-@property
 def etat_commande(self):
     """
     Retourne l'état actuel de la commande.
 
-    :return: str - L'état actuel de la commande. Peut être "C" (Commandée) ou "P" (Préparée).
-    
-    PRE: L'état de la commande a été initialisé avec une valeur valide ("C" ou "P").
-    POST: Retourne l'état actuel de la commande.
+    PRE : La commande doit exister et son état doit être valide.
+    POST : Retourne l'état actuel de la commande ('C' pour Commandée, 'P' pour Prête).
     """
     return self._etat_commande
-
-@etat_commande.setter
-def etat_commande(self, etat):
-    """
-    Modifie l'état de la commande.
-
-    :param etat: str - L'état de la commande. Doit être "C" ou "P".
-    
-    PRE: `etat` doit être "C" ou "P".
-    POST: L'état de la commande est mis à jour avec la nouvelle valeur spécifiée.
-    
-    :raises ValueError: Si `etat` n'est pas "C" ou "P".
-    """
-    if etat in ["C", "P"]:
-        self._etat_commande = etat
-    else:
-        raise ValueError("L'état de la commande doit être 'C' ou 'P'")
-
-
 
 
 #2
@@ -36,68 +14,53 @@ def ajouter_plat(self, plat):
     """
     Ajoute un plat à la commande.
 
-    :param plat: Plat - L'instance de plat à ajouter à la commande.
-    
-    PRE: `plat` doit être une instance valide de la classe Plat.
-    POST: Le plat est ajouté à la liste des plats de la commande.
+    PRE : plat est un objet de type Plat valide.
+    POST : Ajoute le plat à la liste des plats de la commande.
     """
     self._plats.append(plat)
+
 
 #3
 def retirer_ingredient(self, nom):
     """
     Retire un ingrédient de la liste des ingrédients du plat.
 
-    :param nom: str - Le nom de l'ingrédient à retirer.
-    
-    PRE: `nom` doit être un ingrédient valide existant dans la liste des ingrédients du plat.
-    POST: L'ingrédient spécifié est retiré de la liste des ingrédients du plat.
-    
-    :raises ValueError: Si l'ingrédient `nom` n'est pas dans la liste des ingrédients.
+    PRE : nom est une chaîne de caractères représentant l'ingrédient à retirer.
+    POST : Retire l'ingrédient spécifié de la liste des ingrédients du plat, si celui-ci existe.
     """
-    self._liste_ingredients.remove(nom)
+    if nom in self._liste_ingredients:
+        self._liste_ingredients.remove(nom)
+    else:
+        raise ValueError(f"L'ingrédient {nom} n'existe pas dans la liste.")
 
 #4
-@property
 def etat_plat(self):
     """
     Retourne l'état actuel du plat.
 
-    :return: str - L'état actuel du plat. Peut être "C" (Commandé), "P" (Préparé), ou "S" (Servi).
-    
-    PRE: L'état du plat doit avoir été initialisé avec une valeur valide ("C", "P" ou "S").
-    POST: Retourne l'état actuel du plat.
+    PRE : L'état du plat doit être valide.
+    POST : Retourne l'état actuel du plat ('C' pour Commandé, 'P' pour Préparé, 'S' pour Servi).
     """
     return self._etat_plat
-
-@etat_plat.setter
-def etat_plat(self, etat):
-    """
-    Modifie l'état du plat.
-
-    :param etat: str - L'état du plat. Doit être "C", "P" ou "S".
-    
-    PRE: `etat` doit être une chaîne de caractères, et doit être "C", "P" ou "S".
-    POST: L'état du plat est mis à jour avec la nouvelle valeur spécifiée.
-    
-    :raises ValueError: Si `etat` n'est pas "C", "P" ou "S".
-    """
-    if etat in ["C", "P", "S"]:
-        self._etat_plat = etat
-    else:
-        raise ValueError("L'état du plat doit être 'C', 'P' ou 'S'")
 
 #5
 def regrouper_table(self, *table):
     """
-    Fusionne plusieurs tables avec la table actuelle.
+    Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
 
-    :param table: Table - D'autres tables à fusionner avec la table actuelle.
-    
-    PRE: `table` contient des instances valides de la classe Table.
-    POST: Les tables spécifiées sont fusionnées, et le nombre de places de la table actuelle est ajusté.
-    
-    :raises ValueError: Si les tables ne peuvent pas être fusionnées.
+    PRE : `table` est une liste d'objets Table valides.
+    POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
     """
-    plus_petit_num_table = self  # Table avec le plus petit numéro
-    table_to_merge = [self]  # Liste des tables
+    plus_petit_num_table = self  # Table avec le plus petit num_table
+    table_to_merge = [self]  # Tableau des Tables à fusionner
+    for i in table:
+        table_to_merge.append(i)
+        if i._num_table < plus_petit_num_table._num_table:
+            plus_petit_num_table = i
+    place_en_plus = 0  # Places des tables à regrouper
+    for i in table_to_merge:
+        if i._num_table != plus_petit_num_table._num_table:
+            place_en_plus += i._nbr_place
+            i._nbr_place -= i._nbr_place
+            i._etat_table = "fusionné"
+    plus_petit_num_table._nbr_place += place_en_plus  # Rajout des places récupérées à la Table principale
