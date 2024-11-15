@@ -1,3 +1,6 @@
+from commande import Commande
+
+
 class Table:
     def __init__(self, num_table, nbr_place=4, etat_table="L", commande=None):
         self._nbr_place = nbr_place
@@ -12,10 +15,15 @@ class Table:
 
     @nbr_place.setter
     def nbr_place(self, places):
-        if places >= 0:
+        """ Change le nombre de place d'une table
+        PRE : places est un entier positif
+        POST : modifie le nombre de place à une table
+        Raise : ValueError si places est plus petit que 0 ou n'est pas un entier
+        """
+        if isinstance(places, int) and places >= 0:
             self._nbr_place = places
         else:
-            raise ValueError("Le nombre de places ne peut pas être négatif")
+            raise ValueError("Le nombre de places doit être un entier positif")
 
     # Getter et Setter pour _etat_table
     @property
@@ -24,7 +32,12 @@ class Table:
 
     @etat_table.setter
     def etat_table(self, etat):
-        if etat in ["O", "L", "N", "R", "F"]:
+        """ Change l'état d'une table
+        PRE : etat est un carractère dans ["O", "L", "N", "R", "F"]
+        POST : modifie l'état de la table
+        Raise : ValueError si l'état est pas l'un de ces caractères ["O", "L", "N", "R", "F"]
+        """
+        if isinstance(etat, str) and etat in ["O", "L", "N", "R", "F"]:
             self._etat_table = etat
         else:
             raise ValueError("L'état de la table doit être O-occupé, L-libre, N-nettoyage, R-réservé, F-fusionné")
@@ -41,7 +54,15 @@ class Table:
 
     @commande.setter
     def commande(self, new_commande):
-        self._commande = new_commande
+        """ Associe à la table une commande
+        PRE : new_commande est un objet Commande
+        POST : associe new_commande à la table
+        RAISE : TypeError si new_commande n'est pas une instance de Commande
+        """
+        if isinstance(new_commande, Commande):
+            self._commande = new_commande
+        else:
+            raise TypeError("La commande doit être une instance de Commande")
 
     def regrouper_table(self, *table):
         plus_petit_num_table = self # Table avec le plus petit num_table
