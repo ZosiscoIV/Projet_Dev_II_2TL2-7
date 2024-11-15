@@ -1,4 +1,7 @@
 #1
+from new_MVP.table import Table
+
+
 def etat_commande(self):
     """
     Retourne l'état actuel de la commande.
@@ -14,8 +17,9 @@ def etat_commande(self, etat):
 
     PRE : etat doit être une chaîne de caractères valide ('C' ou 'P').
     POST : Modifie l'état de la commande en fonction de la valeur donnée.
+    RAISE : ValueError si etat n'est pas une chaine de caractères compris dans "C" ou "P"
     """
-    if etat in ["C", "P"]:
+    if isinstance(etat, str) and etat in ["C", "P"]:
         self._etat_commande = etat
     else:
         raise ValueError("L'état de la commande doit être 'C-commandée' ou 'P-prête'.")
@@ -28,8 +32,12 @@ def ajouter_plat(self, plat):
 
     PRE : plat est un objet de type Plat valide.
     POST : Ajoute le plat à la liste des plats de la commande.
+    RAISE : ValueError si le plat fourni n'est pas de type Plat.
     """
-    self._plats.append(plat)
+    if isinstance(plat, Plat):
+        self._plats.append(plat)
+    else:
+        raise ValueError("Le plat fourni n'est pas de type Plat, il est donc invalide.")
 
 
 #3
@@ -39,11 +47,12 @@ def retirer_ingredient(self, nom):
 
     PRE : nom est une chaîne de caractères représentant l'ingrédient à retirer.
     POST : Retire l'ingrédient spécifié de la liste des ingrédients du plat, si celui-ci existe.
+    RAISE : ValueError si l'ingrédient n'est pas du bon type ou pas dans la liste des ingrédients du plat.
     """
-    if nom in self._liste_ingredients:
+    if isinstance(nom, str) and nom in self._liste_ingredients:
         self._liste_ingredients.remove(nom)
     else:
-        raise ValueError(f"L'ingrédient {nom} n'existe pas dans la liste.")
+        raise ValueError(f"L'ingrédient {nom} n'a pas été trouvé.")
 
 #4
 def etat_plat(self):
@@ -61,8 +70,9 @@ def etat_plat(self, etat):
 
     PRE : etat doit être une chaîne de caractères valide ('C' pour Commandé, 'P' pour Préparé, 'S' pour Servi).
     POST : Modifie l'état du plat en fonction de la valeur donnée.
+    RAISE : ValueError si etat n'est pas une chaine de caractères compris dans "C", "P" ou "S"
     """
-    if etat in ["C", "P", "S"]:
+    if isinstance(etat, str) and etat in ["C", "P", "S"]:
         self._etat_plat = etat
     else:
         raise ValueError("L'état du plat doit être 'C-commandé', 'P-préparé' ou 'S-servi'.")
@@ -74,10 +84,13 @@ def regrouper_table(self, *table):
 
     PRE : `table` est une liste d'objets Table valides.
     POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
+    RAISE : ValueError lorsqu'une table n'est pas de type Table.
     """
     plus_petit_num_table = self  # Table avec le plus petit num_table
     table_to_merge = [self]  # Tableau des Tables à fusionner
     for i in table:
+        if not isinstance(i, Table):
+            raise ValueError("L'une des tables fournie n'est pas de type table.")
         table_to_merge.append(i)
         if i._num_table < plus_petit_num_table._num_table:
             plus_petit_num_table = i

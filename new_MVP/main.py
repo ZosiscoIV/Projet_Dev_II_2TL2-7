@@ -15,7 +15,7 @@ compteur_commande = 1
 # Acces au fichier nemu.json
 with open('menu.json', 'r') as file:
     menu = json.load(file)
-    print(menu)
+    # print(menu)
 
 
 # Initialisation de 20 tables (numérotées de 1 à 20) comme libres
