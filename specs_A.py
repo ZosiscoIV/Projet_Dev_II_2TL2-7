@@ -1,6 +1,4 @@
 #1
-from new_MVP.table import Table
-
 
 def etat_commande(self):
     """

@@ -10,21 +10,44 @@ class Commande:
 
     @property
     def etat_commande(self):
+        """
+        Retourne l'état actuel de la commande.
+
+        PRE : La commande doit exister et son état doit être valide.
+        POST : Retourne l'état actuel de la commande ('C' pour Commandée, 'P' pour Prête).
+        """
         return self._etat_commande
 
     @etat_commande.setter
     def etat_commande(self, etat):
-        if etat in ["C", "P"]:
+        """
+        Modifie l'état de la commande.
+
+        PRE : etat doit être une chaîne de caractères valide ('C' ou 'P').
+        POST : Modifie l'état de la commande en fonction de la valeur donnée.
+        RAISE : ValueError si etat n'est pas une chaine de caractères compris dans "C" ou "P"
+        """
+        if isinstance(etat, str) and etat in ["C", "P"]:
             self._etat_commande = etat
         else:
-            raise ValueError("L'état de la commande doit être 'C-commandé', 'P-prête'")
+            raise ValueError("L'état de la commande doit être 'C-commandée' ou 'P-prête'.")
 
     @property
     def plats(self):
         return self._plats
 
-    def ajouter_plat(self,plat):
-        self._plats.append(plat)
+    def ajouter_plat(self, plat):
+        """
+        Ajoute un plat à la commande.
+
+        PRE : plat est un objet de type Plat valide.
+        POST : Ajoute le plat à la liste des plats de la commande.
+        RAISE : ValueError si le plat fourni n'est pas de type Plat.
+        """
+        if isinstance(plat, Plat):
+            self._plats.append(plat)
+        else:
+            raise ValueError("Le plat fourni n'est pas de type Plat, il est donc invalide.")
 
     def retirer_plat(self, index_plat):
         """ Retire un plat de la commande

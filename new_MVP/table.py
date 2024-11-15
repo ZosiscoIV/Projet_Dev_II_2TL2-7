@@ -65,20 +65,28 @@ class Table:
             raise TypeError("La commande doit être une instance de Commande")
 
     def regrouper_table(self, *table):
-        plus_petit_num_table = self # Table avec le plus petit num_table
-        table_to_merge = [self] # tableau des Tables à fusionner
+        """
+        Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
+
+        PRE : `table` est une liste d'objets Table valides.
+        POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
+        RAISE : ValueError lorsqu'une table n'est pas de type Table.
+        """
+        plus_petit_num_table = self  # Table avec le plus petit num_table
+        table_to_merge = [self]  # Tableau des Tables à fusionner
         for i in table:
+            if not isinstance(i, Table):
+                raise ValueError("L'une des tables fournie n'est pas de type table.")
             table_to_merge.append(i)
             if i._num_table < plus_petit_num_table._num_table:
                 plus_petit_num_table = i
-        place_en_plus = 0 # place des tables à regrouper
+        place_en_plus = 0  # Places des tables à regrouper
         for i in table_to_merge:
             if i._num_table != plus_petit_num_table._num_table:
                 place_en_plus += i._nbr_place
                 i._nbr_place -= i._nbr_place
-                i._etat_table = "fusionne"
-                self._table_merged.append(i)
-        plus_petit_num_table._nbr_place += place_en_plus # Rajout des places récupérées à la Table "Principale"
+                i._etat_table = "fusionné"
+        plus_petit_num_table._nbr_place += place_en_plus  # Rajout des places récupérées à la Table principale
 
     def defusionner_table(self):
         for i in self._table_merged:
