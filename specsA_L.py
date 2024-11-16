@@ -57,7 +57,7 @@ def modifier(self,rdv, nbr_pers):
     PRE : rdv est une date 
           nbr_pers est un entier positif ou nul
     POST : change le rdv et nbr_pers
-    RAISE : 
+    RAISE : ValueError si rdv n'est pas une date et le nombre de personne est négatif ou pas un entier 
     """
     if isinstance(rdv, datetime.date) and isinstance(nbr_pers, int) and nbr_pers >= 0 : 
         self._rdv = rdv
