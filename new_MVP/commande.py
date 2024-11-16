@@ -1,11 +1,24 @@
+from plat import Plat
+
+
 class Commande:
     def __init__(self,num_commande, etat_commande= "C"):
+        """
+        Initialise une commande
+        PRE : num_commande est un entier positif
+              etat_commande est un caractère ("C" pour commandée, "P" pour prête)
+        POST : Crée une instance de Commande
+        """
         self._num_commande = num_commande
         self._etat_commande = etat_commande # commande et pret
         self._plats = []
 
     @property
     def num_commande(self):
+        """
+        Retourne le numéro de commande
+        POST : Retourne  le numéro de commande
+        """
         return self._num_commande
 
     @property
@@ -34,6 +47,10 @@ class Commande:
 
     @property
     def plats(self):
+        """
+        Retourne les plats de la commande
+        POST : Retourne  les plats de commande
+        """
         return self._plats
 
     def ajouter_plat(self, plat):

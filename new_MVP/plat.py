@@ -1,5 +1,13 @@
 class Plat:
     def __init__(self, nom, liste_ingredients, prix, etat_plat="C"):
+        """
+        Initialise un plat
+        PRE : nom est une chaine de caractère
+              liste_ingredients est une liste composé d'ingredients
+              prix est le prix du plat
+              etat_plat est un caractère ('C' pour Commandé, 'P' pour Préparé, 'S' pour Servi)
+        POST : Crée une instance de Plat
+        """
         self._nom = nom
         self._liste_ingredients = liste_ingredients
         self._prix = prix
@@ -7,10 +15,18 @@ class Plat:
 
     @property
     def nom(self):
+        """
+        Retourne le nom du plat
+        POST : Retourne  le nom du plat
+        """
         return self._nom
 
     @property
     def liste_ingredients(self):
+        """
+        Retourne la liste d'ingrédients du plat
+        POST : Retourne  la liste d'ingrédients du plat
+        """
         return self._liste_ingredients
 
     def retirer_ingredient(self, nom):
@@ -28,6 +44,10 @@ class Plat:
 
     @property
     def prix(self):
+        """
+         Retourne le prix du plat
+         POST : Retourne  le prix du plat
+         """
         return self._prix
 
     @property

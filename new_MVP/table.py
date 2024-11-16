@@ -3,6 +3,14 @@ from commande import Commande
 
 class Table:
     def __init__(self, num_table, nbr_place=4, etat_table="L", commande=None):
+        """
+        Initialise une table
+        PRE : num_table est un entier positif
+              nbr_table est un entier positif
+              etat_table est un caractère dans ["O", "L", "N", "R", "F"]
+              commande est un objet de Commande
+        POST : Crée une instance de Commande
+        """
         self._nbr_place = nbr_place
         self._num_table = num_table
         self._etat_table = etat_table
@@ -11,6 +19,10 @@ class Table:
 
     @property
     def nbr_place(self):
+        """
+        Retourne le nombre de places de la table
+        POST : Retourne  le nombre de places de la table
+        """
         return self._nbr_place
 
     @nbr_place.setter
@@ -28,6 +40,10 @@ class Table:
     # Getter et Setter pour _etat_table
     @property
     def etat_table(self):
+        """
+        Retourne l'état de la table
+        POST : Retourne  l'état de la table
+        """
         return self._etat_table
 
     @etat_table.setter
@@ -45,11 +61,19 @@ class Table:
     # Getter pour _num_table (pas de setter car il ne devrait pas être modifié)
     @property
     def num_table(self):
+        """
+        Retourne le numéro de la table
+        POST : Retourne  le numéro de la table
+        """
         return self._num_table
 
     # Getter et Setter pour _num_commande
     @property
     def commande(self):
+        """
+        Retourne l'objet de Commande
+        POST : Retourne  l'objet de Commande
+        """
         return self._commande
 
     @commande.setter
@@ -89,6 +113,10 @@ class Table:
         plus_petit_num_table._nbr_place += place_en_plus  # Rajout des places récupérées à la Table principale
 
     def defusionner_table(self):
+        """
+        Défusionne un table
+        POST : resépare les tables, remet l'état de la table en libre et le nombre de places d'origine.
+        """
         for i in self._table_merged:
             i._etat_table = "libre"
             i._nbr_place = int(self._nbr_place/(len(self._table_merged)+1))
