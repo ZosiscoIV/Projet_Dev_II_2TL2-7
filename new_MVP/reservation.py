@@ -2,18 +2,16 @@ import datetime
 
 
 class Reservation:
-    def __init__(self,num_reservation,nom_pers, rdv, nbr_pers, num_table):
+    def __init__(self,client, rdv, nbr_pers, num_table):
         """
         Initialise une réservation
-        PRE : num_reservation est un entier positif
-              nom_pers est une chaine de caractère
+        PRE : client est un objet Client
               rdv est une date et une heure
               nbr_pers est un entier positif
               num_table est un entier positif
         POST : Crée une instance de Reservation
         """
-        self._num_reservation = num_reservation
-        self._nom_pers = nom_pers
+        self._client = client
         self._rdv = rdv
         self._nbr_pers = nbr_pers
         self._num_table = num_table

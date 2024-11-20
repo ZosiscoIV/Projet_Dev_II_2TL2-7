@@ -1,8 +1,11 @@
 import json
+from datetime import datetime
 
 from table import Table
 from commande import Commande
 from plat import Plat
+from client import Client
+from reservation import Reservation
 
 
 # Liste pour stocker les tables
@@ -11,6 +14,9 @@ tables = []
 
 # Compteur pour le numero de commande
 compteur_commande = 1
+
+# annee_actuelle
+annee_actuelle = datetime.now().year
 
 # Acces au fichier nemu.json
 with open('menu.json', 'r') as file:
@@ -31,11 +37,36 @@ def choix_table():
         num = input("Numéro invalie, entrez un autre numéro de table : ")
     return int(num)
 
+def choix_rdv():
+    annee = input("Entrez l'année'\n")
+    while not annee.isdigit() or int(annee) < annee_actuelle:
+        annee = input("Entrez l'année'\n")
+    mois = input("Entrez le mois\n")
+    while not mois.isdigit() or (int(mois) < 1 or int(mois) > 12):
+        mois = input("Entrez le mois'\n")
+    jour = input("Entrez le jour\n")
+    while not jour.isdigit() or (int(jour) <= 0 or int(jour) > 31):
+        jour = input("Entrez le jour'\n")
+    heure_minute = input("Entrez l'heure format (HH:MM)'\n")
+    while True:
+        try:
+            heure, minute = map(int, heure_minute.split(":"))
+            if 0 <= heure <= 23 and 0 <= minute <= 59:
+                break
+            else:
+                print("L'heure doit être entre 00:00 et 23:59.")
+        except ValueError:
+            print("Le format doit être HH:MM avec des nombres valides.")
+        heure_minute = input("Entrez l'heure au format (HH:MM) :\n")
+
+    rendez_vous = datetime(year=int(annee), month=int(mois), day=int(jour), hour=int(heure), minute=int(minute))
+    return rendez_vous
+
 # Boucle principale pour interagir avec l'utilisateur
 while True:
     # Affichage des options et choix de l'action par l'utilisateur
-    action = input("1) Changer état table 2) Voir toutes les tables 3) Créer une commande \n")
-    while action not in ["1", "2", "3"]:
+    action = input("1) Changer état table 2) Voir toutes les tables 3) Créer une commande 4) Gérer une réservation \n")
+    while action not in ["1", "2", "3", "4"]:
         action = input("Action invalie, entrez une autre action\n")
     action = int(action)
 
@@ -153,7 +184,50 @@ while True:
             else:
                 print("Erreur dans la commande")
 
+    elif action == 4:
+        demande = input("1) Ajouter réservation 2) Modifier une réservation 3) Annuler une réservation 4) Afficher toutes les réservations 5) Retour \n ")
+        while demande not in ["1", "2", "3", "4", "5"]:
+            demande = input("Action invalie, entrez une autre action\n")
+        demande = int(demande)
+        # Ajouter une réservation
+        if demande == 1:
+            nom_client = input("Entrez le nom du client\n")
+            verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client}\033[0m : O-oui, N-non\n")
+            while verif_nom.upper() != "O":
+                nom_client = input("Entrez à nouveau le nom du client\n")
+                verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client}\033[0m : O-oui, N-non\n")
 
+            tel = input("Entrez le numéro de téléphone du client\n")
+            verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
+            while verif_tel.upper() != "O":
+                tel = input("Entrez à nouveau le numéro de téléphone du client\n")
+                verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
+
+            rdv = choix_rdv()
+            verif_rdv = input(f"Etes vous sûr du rendez-vous \033[4m{rdv.strftime("%d/%m/%Y à %H:%M")}\033[0m : O-oui, N-non\n")
+            while verif_rdv.upper() != "O":
+                rdv = choix_rdv()
+                verif_rdv = input(f"Etes vous sûr du rendez-vous \033[4m{rdv.strftime("%d/%m/%Y à %H:%M")}\033[0m : O-oui, N-non\n")
+
+            quantite_pers = input("Entrez le nombre de personnes pour la réservation\n")
+            while not quantite_pers.isdigit() or (int(quantite_pers) <= 0 or int(quantite_pers) > 50):
+                quantite_pers = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
+
+            numero_table = choix_table()
+
+            client = Client(nom_client, tel)
+            reservation = Reservation(client,rdv,quantite_pers,numero_table)
+
+        elif demande == 2:
+            pass
+        elif demande == 3:
+            pass
+        elif demande == 4:
+            pass
+        elif demande == 5:
+            pass
+        else:
+            print("Erreur dans la réservation")
 
     # Cas ou l'action n'est pas une option valide
     else:
