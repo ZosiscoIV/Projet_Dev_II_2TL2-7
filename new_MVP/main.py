@@ -21,7 +21,7 @@ compteur_commande = 1
 # annee_actuelle
 annee_actuelle = datetime.now().year
 
-# Acces au fichier nemu.json
+# Acces au fichier menu.json
 with open('menu.json', 'r') as file:
     menu = json.load(file)
     # print(menu)
@@ -40,6 +40,7 @@ def choix_table():
         num = input("Numéro invalie, entrez un autre numéro de table : ")
     return int(num)
 
+# Choix du moment de la réservation
 def choix_rdv():
     annee = input("Entrez l'année'\n")
     while not annee.isdigit() or int(annee) < annee_actuelle:
@@ -64,6 +65,10 @@ def choix_rdv():
 
     rendez_vous = datetime(year=int(annee), month=int(mois), day=int(jour), hour=int(heure), minute=int(minute))
     return rendez_vous
+
+# Retrouver la réservation en fonction du nom
+def trouver_reservation():
+    pass
 
 # Boucle principale pour interagir avec l'utilisateur
 while True:
@@ -188,87 +193,99 @@ while True:
                 print("Erreur dans la commande")
 
     elif action == 4:
-        demande = input("1) Ajouter réservation 2) Modifier une réservation 3) Annuler une réservation 4) Afficher toutes les réservations 5) Retour \n ")
-        while demande not in ["1", "2", "3", "4", "5"]:
-            demande = input("Action invalie, entrez une autre action\n")
-        demande = int(demande)
-        # Ajouter une réservation
-        if demande == 1:
-            nom_client = input("Entrez le nom du client\n")
-            verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client}\033[0m : O-oui, N-non\n")
-            while verif_nom.upper() != "O":
-                nom_client = input("Entrez à nouveau le nom du client\n")
+        while True:
+            demande = input("1) Ajouter réservation 2) Modifier une réservation 3) Annuler une réservation 4) Afficher toutes les réservations 5) Retour \n ")
+            while demande not in ["1", "2", "3", "4", "5"]:
+                demande = input("Action invalie, entrez une autre action\n")
+            demande = int(demande)
+
+
+            # Ajouter une réservation
+            if demande == 1:
+                nom_client = input("Entrez le nom du client\n")
                 verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client}\033[0m : O-oui, N-non\n")
+                while verif_nom.upper() != "O":
+                    nom_client = input("Entrez à nouveau le nom du client\n")
+                    verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client}\033[0m : O-oui, N-non\n")
 
-            tel = input("Entrez le numéro de téléphone du client\n")
-            verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
-            while verif_tel.upper() != "O":
-                tel = input("Entrez à nouveau le numéro de téléphone du client\n")
+                tel = input("Entrez le numéro de téléphone du client\n")
                 verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
+                while verif_tel.upper() != "O":
+                    tel = input("Entrez à nouveau le numéro de téléphone du client\n")
+                    verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
 
-            rdv = choix_rdv()
-            verif_rdv = input(f"Etes vous sûr du rendez-vous \033[4m{rdv.strftime("%d/%m/%Y à %H:%M")}\033[0m : O-oui, N-non\n")
-            while verif_rdv.upper() != "O":
                 rdv = choix_rdv()
                 verif_rdv = input(f"Etes vous sûr du rendez-vous \033[4m{rdv.strftime("%d/%m/%Y à %H:%M")}\033[0m : O-oui, N-non\n")
+                while verif_rdv.upper() != "O":
+                    rdv = choix_rdv()
+                    verif_rdv = input(f"Etes vous sûr du rendez-vous \033[4m{rdv.strftime("%d/%m/%Y à %H:%M")}\033[0m : O-oui, N-non\n")
 
-            quantite_pers = input("Entrez le nombre de personnes pour la réservation\n")
-            while not quantite_pers.isdigit() or (int(quantite_pers) <= 0 or int(quantite_pers) > 50):
-                quantite_pers = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
+                quantite_pers = input("Entrez le nombre de personnes pour la réservation\n")
+                while not quantite_pers.isdigit() or (int(quantite_pers) <= 0 or int(quantite_pers) > 50):
+                    quantite_pers = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
 
-            numero_table = choix_table()
+                numero_table = choix_table()
 
-            client = Client(nom_client, tel)
-            reservation = Reservation(client,rdv,quantite_pers,numero_table)
-            reservations.append(reservation)
+                client = Client(nom_client, tel)
+                reservation = Reservation(client,rdv,quantite_pers,numero_table)
+                reservations.append(reservation)
 
-        elif demande == 2:
-            reservation = None
-            nom_client_pour_changer_sa_reservation = input("Entrez le nom du client\n")
-            verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
-            while verif_nom.upper() != "O":
-                nom_client_pour_changer_sa_reservation = input("Entrez à nouveau le nom du client\n")
+
+            elif demande == 2:
+                reservation = None
+                nom_client_pour_changer_sa_reservation = input("Entrez le nom du client\n")
                 verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
-            for i in reservations:
-                if i.client.nom == nom_client_pour_changer_sa_reservation:
-                    reservation = i
-                    break
+                while verif_nom.upper() != "O":
+                    nom_client_pour_changer_sa_reservation = input("Entrez à nouveau le nom du client\n")
+                    verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
+                for i in reservations:
+                    if i.client.nom == nom_client_pour_changer_sa_reservation:
+                        reservation = i
+                        break
 
-            if reservation :
-                changement = input("Vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
-                while changement not in ["1", "2", "3"]:
-                    changement = input("Entrée invalide, vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
-                changement = int(changement)
+                if reservation:
+                    changement = input("Vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
+                    while changement not in ["1", "2", "3"]:
+                        changement = input("Entrée invalide, vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
+                    changement = int(changement)
 
-                if changement == 1:
-                    rdv_nouveau = choix_rdv()
-                    reservation.modifier(rdv = rdv_nouveau)
+                    if changement == 1:
+                        rdv_nouveau = choix_rdv()
+                        reservation.modifier(rdv = rdv_nouveau)
 
-                elif changement == 2:
-                    nbr_pers_nouveau = input("Entrez le nombre de personnes pour la réservation\n")
-                    while not nbr_pers_nouveau.isdigit() or (int(nbr_pers_nouveau) <= 0 or int(nbr_pers_nouveau) > 50):
-                        nbr_pers_nouveau = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
-                    reservation.modifier(nbr_pers = nbr_pers_nouveau)
+                    elif changement == 2:
+                        nbr_pers_nouveau = input("Entrez le nombre de personnes pour la réservation\n")
+                        while not nbr_pers_nouveau.isdigit() or (int(nbr_pers_nouveau) <= 0 or int(nbr_pers_nouveau) > 50):
+                            nbr_pers_nouveau = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
+                        reservation.modifier(nbr_pers = nbr_pers_nouveau)
 
-                elif changement == 3:
-                    rdv_nouveau = choix_rdv()
-                    nbr_pers_nouveau = input("Entrez le nombre de personnes pour la réservation\n")
-                    while not nbr_pers_nouveau.isdigit() or (int(nbr_pers_nouveau) <= 0 or int(nbr_pers_nouveau) > 50):
-                        nbr_pers_nouveau = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
-                    reservation.modifier(rdv_nouveau,nbr_pers_nouveau)
+                    elif changement == 3:
+                        rdv_nouveau = choix_rdv()
+                        nbr_pers_nouveau = input("Entrez le nombre de personnes pour la réservation\n")
+                        while not nbr_pers_nouveau.isdigit() or (int(nbr_pers_nouveau) <= 0 or int(nbr_pers_nouveau) > 50):
+                            nbr_pers_nouveau = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
+                        reservation.modifier(rdv_nouveau,nbr_pers_nouveau)
 
+                    else:
+                        ValueError("Erreur dans la modification de la réservation")
                 else:
-                    ValueError("Erreur dans la modification de la réservation")
+                    ValueError("Le client n'a pas été trouvé")
+
+
+            elif demande == 3:
+                pass
+
+
+            elif demande == 4:
+                pass
+
+
+            elif demande == 5:
+                break
+
+
             else:
-                ValueError("Le client n'a pas été trouvé")
-        elif demande == 3:
-            pass
-        elif demande == 4:
-            pass
-        elif demande == 5:
-            pass
-        else:
-            print("Erreur dans la réservation")
+                print("Erreur dans la réservation")
 
     # Cas ou l'action n'est pas une option valide
     else:
