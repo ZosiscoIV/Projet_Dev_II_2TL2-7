@@ -11,6 +11,9 @@ from reservation import Reservation
 # Liste pour stocker les tables
 tables = []
 
+# Liste de réservation
+reservations = []
+
 
 # Compteur pour le numero de commande
 compteur_commande = 1
@@ -217,9 +220,47 @@ while True:
 
             client = Client(nom_client, tel)
             reservation = Reservation(client,rdv,quantite_pers,numero_table)
+            reservations.append(reservation)
 
         elif demande == 2:
-            pass
+            reservation = None
+            nom_client_pour_changer_sa_reservation = input("Entrez le nom du client\n")
+            verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
+            while verif_nom.upper() != "O":
+                nom_client_pour_changer_sa_reservation = input("Entrez à nouveau le nom du client\n")
+                verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
+            for i in reservations:
+                if i.client.nom == nom_client_pour_changer_sa_reservation:
+                    reservation = i
+                    break
+
+            if reservation :
+                changement = input("Vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
+                while changement not in ["1", "2", "3"]:
+                    changement = input("Entrée invalide, vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
+                changement = int(changement)
+
+                if changement == 1:
+                    rdv_nouveau = choix_rdv()
+                    reservation.modifier(rdv = rdv_nouveau)
+
+                elif changement == 2:
+                    nbr_pers_nouveau = input("Entrez le nombre de personnes pour la réservation\n")
+                    while not nbr_pers_nouveau.isdigit() or (int(nbr_pers_nouveau) <= 0 or int(nbr_pers_nouveau) > 50):
+                        nbr_pers_nouveau = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
+                    reservation.modifier(nbr_pers = nbr_pers_nouveau)
+
+                elif changement == 3:
+                    rdv_nouveau = choix_rdv()
+                    nbr_pers_nouveau = input("Entrez le nombre de personnes pour la réservation\n")
+                    while not nbr_pers_nouveau.isdigit() or (int(nbr_pers_nouveau) <= 0 or int(nbr_pers_nouveau) > 50):
+                        nbr_pers_nouveau = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
+                    reservation.modifier(rdv_nouveau,nbr_pers_nouveau)
+
+                else:
+                    ValueError("Erreur dans la modification de la réservation")
+            else:
+                ValueError("Le client n'a pas été trouvé")
         elif demande == 3:
             pass
         elif demande == 4:
