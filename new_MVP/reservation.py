@@ -70,5 +70,3 @@ class Reservation:
         self._rdv = rdv
         self._nbr_pers = nbr_pers
 
-    def annuler(self):
-        pass

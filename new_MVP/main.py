@@ -68,7 +68,18 @@ def choix_rdv():
 
 # Retrouver la réservation en fonction du nom
 def trouver_reservation():
-    pass
+    res = None
+    nom_client_pour_changer_sa_reservation = input("Entrez le nom du client\n")
+    verif = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
+    while verif.upper() != "O":
+        nom_client_pour_changer_sa_reservation = input("Entrez à nouveau le nom du client\n")
+        verif = input(
+            f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
+    for i in reservations:
+        if i.client.nom == nom_client_pour_changer_sa_reservation:
+            res = i
+            break
+    return res
 
 # Boucle principale pour interagir avec l'utilisateur
 while True:
@@ -194,11 +205,10 @@ while True:
 
     elif action == 4:
         while True:
-            demande = input("1) Ajouter réservation 2) Modifier une réservation 3) Annuler une réservation 4) Afficher toutes les réservations 5) Retour \n ")
-            while demande not in ["1", "2", "3", "4", "5"]:
+            demande = input("1) Ajouter réservation 2) Modifier une réservation 3) Annuler une réservation 4) Afficher toutes les réservations 5) Fusionner et défusionner une table 6) Retour \n ")
+            while demande not in ["1", "2", "3", "4", "5", "6"]:
                 demande = input("Action invalie, entrez une autre action\n")
             demande = int(demande)
-
 
             # Ajouter une réservation
             if demande == 1:
@@ -229,20 +239,10 @@ while True:
                 client = Client(nom_client, tel)
                 reservation = Reservation(client,rdv,quantite_pers,numero_table)
                 reservations.append(reservation)
-
+                tables[numero_table - 1].etat_table = "R"
 
             elif demande == 2:
-                reservation = None
-                nom_client_pour_changer_sa_reservation = input("Entrez le nom du client\n")
-                verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
-                while verif_nom.upper() != "O":
-                    nom_client_pour_changer_sa_reservation = input("Entrez à nouveau le nom du client\n")
-                    verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
-                for i in reservations:
-                    if i.client.nom == nom_client_pour_changer_sa_reservation:
-                        reservation = i
-                        break
-
+                reservation = trouver_reservation()
                 if reservation:
                     changement = input("Vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
                     while changement not in ["1", "2", "3"]:
@@ -270,17 +270,46 @@ while True:
                         ValueError("Erreur dans la modification de la réservation")
                 else:
                     ValueError("Le client n'a pas été trouvé")
+                    print("Le client n'a pas été trouvé \n")
+
 
 
             elif demande == 3:
-                pass
-
+                reservation = trouver_reservation()
+                reservations.remove(reservation)
+                check_num = None
+                for i in reservations:
+                    if i.num_table == reservation.num_table:
+                        check_num = i.num_table
+                    else:
+                        pass
+                if check_num is None:
+                    tables[reservation.num_table - 1].etat_table = "L"
 
             elif demande == 4:
-                pass
-
+                reservations = sorted(reservations, key = lambda t: t.rdv)
+                for i in reservations:
+                    print(f"Nom : {i.client.nom}, date: {i.rdv.strftime("%d/%m/%Y à %H:%M")}, le nombre de personne : {i.nbr_pers}, le n° de table : {i.num_table}")
 
             elif demande == 5:
+                liste_tables_a_fusionner = []
+                num = None
+                question = input("Voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
+                while question not in ["1", "2"]:
+                    question = input("Entrée invalide, voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
+                if question == 1:
+                    while True:
+                        num = choix_table()
+                        for i in tables:
+                            if i.num_table == num:
+                                liste_tables_a_fusionner.append(i)
+
+                elif question == 2:
+                    pass
+                else:
+                    ValueError("Erreur lors de la fusion ou de la défusion")
+
+            elif demande == 6:
                 break
 
 
