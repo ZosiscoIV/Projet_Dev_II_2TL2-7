@@ -1,5 +1,35 @@
 from commande import Commande
 
+def regrouper_table(table):
+    """
+    Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
+
+    PRE : `table` est une liste d'objets Table valides.
+    POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
+    RAISE : ValueError lorsqu'une table n'est pas de type Table.
+    """
+    plus_petit_num_table = table[0]
+    for i in table:
+        if i.num_table < plus_petit_num_table.num_table:
+            plus_petit_num_table = i
+    place_en_plus = 0  # Places des tables à regrouper
+    for i in table:
+        if i.num_table != plus_petit_num_table.num_table:
+            place_en_plus += i.nbr_place
+            i.nbr_place -= i.nbr_place
+            i.etat_table = "F"
+    plus_petit_num_table.nbr_place += place_en_plus  # Rajout des places récupérées à la Table principale
+
+
+def defusionner_table(table):
+    """
+    Défusionne un table
+    POST : resépare les tables, remet l'état de la table en libre et le nombre de places d'origine.
+    """
+    for i in table:
+        i.etat_table = "L"
+        i.nbr_place = int(i.nbr_place/(len(table)))
+
 
 class Table:
     def __init__(self, num_table, nbr_place=4, etat_table="L", commande=None):
@@ -88,37 +118,31 @@ class Table:
         else:
             raise TypeError("La commande doit être une instance de Commande")
 
-    def regrouper_table(self, *table):
-        """
-        Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
-
-        PRE : `table` est une liste d'objets Table valides.
-        POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
-        RAISE : ValueError lorsqu'une table n'est pas de type Table.
-        """
-        plus_petit_num_table = self  # Table avec le plus petit num_table
-        table_to_merge = [self]  # Tableau des Tables à fusionner
-        for i in table:
-            if not isinstance(i, Table):
-                raise ValueError("L'une des tables fournie n'est pas de type table.")
-            table_to_merge.append(i)
-            if i._num_table < plus_petit_num_table._num_table:
-                plus_petit_num_table = i
-        place_en_plus = 0  # Places des tables à regrouper
-        for i in table_to_merge:
-            if i._num_table != plus_petit_num_table._num_table:
-                place_en_plus += i._nbr_place
-                i._nbr_place -= i._nbr_place
-                i._etat_table = "fusionné"
-        plus_petit_num_table._nbr_place += place_en_plus  # Rajout des places récupérées à la Table principale
-
-    def defusionner_table(self):
-        """
-        Défusionne un table
-        POST : resépare les tables, remet l'état de la table en libre et le nombre de places d'origine.
-        """
-        for i in self._table_merged:
-            i._etat_table = "libre"
-            i._nbr_place = int(self._nbr_place/(len(self._table_merged)+1))
-        self._nbr_place = int(self._nbr_place/(len(self._table_merged)+1))
-        self._table_merged = []
+    # def regrouper_table(self, table):
+    #     """
+    #     Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
+    #
+    #     PRE : `table` est une liste d'objets Table valides.
+    #     POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
+    #     RAISE : ValueError lorsqu'une table n'est pas de type Table.
+    #     """
+    #     plus_petit_num_table = table[0]
+    #     for i in table:
+    #         if i.num_table < plus_petit_num_table.num_table:
+    #             plus_petit_num_table = i
+    #     place_en_plus = 0  # Places des tables à regrouper
+    #     for i in table:
+    #         if i.num_table != plus_petit_num_table.num_table:
+    #             place_en_plus += i.nbr_place
+    #             i.nbr_place -= i.nbr_place
+    #         i.etat_table = "F"
+    #     plus_petit_num_table.nbr_place += place_en_plus  # Rajout des places récupérées à la Table principale
+    #
+    # def defusionner_table(self, table):
+    #     """
+    #     Défusionne un table
+    #     POST : resépare les tables, remet l'état de la table en libre et le nombre de places d'origine.
+    #     """
+    #     for i in table:
+    #         i.etat_table = "L"
+    #         i.nbr_place = int(i.nbr_place/(len(table)))

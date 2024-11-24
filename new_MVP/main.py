@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from table import Table
+from table import Table, regrouper_table, defusionner_table
 from commande import Commande
 from plat import Plat
 from client import Client
@@ -20,6 +20,13 @@ compteur_commande = 1
 
 # annee_actuelle
 annee_actuelle = datetime.now().year
+
+# mois_actuel
+mois_actuel = datetime.now().month
+
+# jour_actuel
+jour_actuel = datetime.now().day
+
 
 # Acces au fichier menu.json
 with open('menu.json', 'r') as file:
@@ -42,16 +49,27 @@ def choix_table():
 
 # Choix du moment de la réservation
 def choix_rdv():
+    # Demande à l'utilisateur l'année de la réservation
     annee = input("Entrez l'année'\n")
+    #Vérification de l'année
     while not annee.isdigit() or int(annee) < annee_actuelle:
-        annee = input("Entrez l'année'\n")
+        annee = input("Entrée invalide, entrez à nouveau l'année\n")
+
+    # Demande à l'utilisateur le mois de la réservation
     mois = input("Entrez le mois\n")
-    while not mois.isdigit() or (int(mois) < 1 or int(mois) > 12):
-        mois = input("Entrez le mois'\n")
+    # Vérification du mois
+    while not mois.isdigit() or (int(mois) < 1 or int(mois) > 12) or int(mois) < mois_actuel:
+        mois = input("Entrée invalide, entrez à nouveau le mois\n")
+
+    # Demande à l'utilisateur le jour de la réservation
     jour = input("Entrez le jour\n")
-    while not jour.isdigit() or (int(jour) <= 0 or int(jour) > 31):
-        jour = input("Entrez le jour'\n")
+    # Vérification du jour
+    while not jour.isdigit() or (int(jour) <= 0 or int(jour) > 31) or int(jour) < jour_actuel:
+        jour = input("Entrée invalide, entrez à nouveau le jour'\n")
+
+    # Demande à l'utilisation l'heure de la réservation
     heure_minute = input("Entrez l'heure format (HH:MM)'\n")
+    # Vérification de l'heure, si elle elle valide, séparation des heures et minutes sinon erreur et on redemande
     while True:
         try:
             heure, minute = map(int, heure_minute.split(":"))
@@ -63,23 +81,47 @@ def choix_rdv():
             print("Le format doit être HH:MM avec des nombres valides.")
         heure_minute = input("Entrez l'heure au format (HH:MM) :\n")
 
+    # Trasformation des intup en format date
     rendez_vous = datetime(year=int(annee), month=int(mois), day=int(jour), hour=int(heure), minute=int(minute))
+
     return rendez_vous
 
 # Retrouver la réservation en fonction du nom
 def trouver_reservation():
     res = None
     nom_client_pour_changer_sa_reservation = input("Entrez le nom du client\n")
+    # Vérification du nom
     verif = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
     while verif.upper() != "O":
         nom_client_pour_changer_sa_reservation = input("Entrez à nouveau le nom du client\n")
         verif = input(
             f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
+    # Recherche l'objet de la reservation dont le nom a été donné
     for i in reservations:
         if i.client.nom == nom_client_pour_changer_sa_reservation:
             res = i
             break
     return res
+
+def fusion_table():
+    liste_tables= []
+    while True:
+        n = input("Entrez un numéro de table ou 'stop' pour arrêter\n ")
+        if n.lower() == "stop":
+            break
+        # Vérification que le numéro de table est valide
+        while not n.isdigit() or (int(n) <= 0 or int(n) > 20):
+            n = input("Numéro invalie, entrez un autre numéro de table ou 'stop' pour arrêter \n ")
+            if n.lower() == "stop":
+                break
+        if n.lower() == "stop":
+            break
+        for i in tables:
+            if i.num_table == int(n):
+                liste_tables.append(i)
+                break
+    return liste_tables
+
 
 # Boucle principale pour interagir avec l'utilisateur
 while True:
@@ -165,8 +207,7 @@ while True:
                         break
                     # Ajouter le plat à la commande
                     plat_a_ajouter = menu[int(plat) - 1]
-                    commande.ajouter_plat(
-                        Plat(plat_a_ajouter["nom"], plat_a_ajouter["liste_ingredients"], plat_a_ajouter["prix"]))
+                    commande.ajouter_plat(Plat(plat_a_ajouter["nom"], plat_a_ajouter["liste_ingredients"], plat_a_ajouter["prix"]))
                     print(f"Le plat {plat_a_ajouter["nom"]} à été ajouté")
 
             # Retirer un plat dans Commande
@@ -203,6 +244,7 @@ while True:
             else:
                 print("Erreur dans la commande")
 
+    # Gerer les réservations
     elif action == 4:
         while True:
             demande = input("1) Ajouter réservation 2) Modifier une réservation 3) Annuler une réservation 4) Afficher toutes les réservations 5) Fusionner et défusionner une table 6) Retour \n ")
@@ -212,53 +254,68 @@ while True:
 
             # Ajouter une réservation
             if demande == 1:
+
+                # Demande le nom du client et vérification
                 nom_client = input("Entrez le nom du client\n")
                 verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client}\033[0m : O-oui, N-non\n")
                 while verif_nom.upper() != "O":
                     nom_client = input("Entrez à nouveau le nom du client\n")
                     verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client}\033[0m : O-oui, N-non\n")
 
+                # Demande le numéro de téléphone du client et vérification
                 tel = input("Entrez le numéro de téléphone du client\n")
                 verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
                 while verif_tel.upper() != "O":
                     tel = input("Entrez à nouveau le numéro de téléphone du client\n")
                     verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
 
+                # Demande les informations du rdv de la réservation et vérification
                 rdv = choix_rdv()
                 verif_rdv = input(f"Etes vous sûr du rendez-vous \033[4m{rdv.strftime("%d/%m/%Y à %H:%M")}\033[0m : O-oui, N-non\n")
                 while verif_rdv.upper() != "O":
                     rdv = choix_rdv()
                     verif_rdv = input(f"Etes vous sûr du rendez-vous \033[4m{rdv.strftime("%d/%m/%Y à %H:%M")}\033[0m : O-oui, N-non\n")
 
+                # Demande le nombre de personnes
                 quantite_pers = input("Entrez le nombre de personnes pour la réservation\n")
                 while not quantite_pers.isdigit() or (int(quantite_pers) <= 0 or int(quantite_pers) > 50):
                     quantite_pers = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
 
+                # Demande le numéro de table auquel il faut mettre la réservation
                 numero_table = choix_table()
 
+                # Création de l'intance client
                 client = Client(nom_client, tel)
+                # Création de l'intance reservation
                 reservation = Reservation(client,rdv,quantite_pers,numero_table)
+                # Ajout de la réservation à la liste des réservations
                 reservations.append(reservation)
+                # Mettre l'état de la table en réservé
                 tables[numero_table - 1].etat_table = "R"
 
+            # Modification de la réservation
             elif demande == 2:
                 reservation = trouver_reservation()
+                # Demande ce qui doit êre modifier si pas trouvé il y a une erreur
                 if reservation:
                     changement = input("Vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
                     while changement not in ["1", "2", "3"]:
                         changement = input("Entrée invalide, vouler-vous changer le : 1) Rendez-vous 2) Nombre de personne 3) les deux \n")
                     changement = int(changement)
 
+                    # Changement uniquement du rendez-vous
                     if changement == 1:
                         rdv_nouveau = choix_rdv()
                         reservation.modifier(rdv = rdv_nouveau)
 
+                    # Changement uniquement du nombre de personnes
                     elif changement == 2:
                         nbr_pers_nouveau = input("Entrez le nombre de personnes pour la réservation\n")
                         while not nbr_pers_nouveau.isdigit() or (int(nbr_pers_nouveau) <= 0 or int(nbr_pers_nouveau) > 50):
                             nbr_pers_nouveau = input("Entrez à nouveau le nombre de personnes pour la réservation\n")
                         reservation.modifier(nbr_pers = nbr_pers_nouveau)
 
+                    # Changement du rendez-vous et du nombre de personnes
                     elif changement == 3:
                         rdv_nouveau = choix_rdv()
                         nbr_pers_nouveau = input("Entrez le nombre de personnes pour la réservation\n")
@@ -272,12 +329,13 @@ while True:
                     ValueError("Le client n'a pas été trouvé")
                     print("Le client n'a pas été trouvé \n")
 
-
-
+            # Annulation de la réservation
             elif demande == 3:
                 reservation = trouver_reservation()
+                # Enlève la réservation de la liste réservations
                 reservations.remove(reservation)
                 check_num = None
+                # Si il y a une autre réservation pour la même table, son état reste comme il est, sinon on passe la table en libre
                 for i in reservations:
                     if i.num_table == reservation.num_table:
                         check_num = i.num_table
@@ -286,27 +344,29 @@ while True:
                 if check_num is None:
                     tables[reservation.num_table - 1].etat_table = "L"
 
+            # Affichage des réservations
             elif demande == 4:
+                # Tri sur les dates
                 reservations = sorted(reservations, key = lambda t: t.rdv)
                 for i in reservations:
                     print(f"Nom : {i.client.nom}, date: {i.rdv.strftime("%d/%m/%Y à %H:%M")}, le nombre de personne : {i.nbr_pers}, le n° de table : {i.num_table}")
 
+            # Fusion ou défusion d'une table
             elif demande == 5:
-                liste_tables_a_fusionner = []
-                num = None
                 question = input("Voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
                 while question not in ["1", "2"]:
                     question = input("Entrée invalide, voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
-                if question == 1:
-                    while True:
-                        num = choix_table()
-                        for i in tables:
-                            if i.num_table == num:
-                                liste_tables_a_fusionner.append(i)
+                if question == "1":
+                    liste_tables_a_fusionner = fusion_table()
+                    print(liste_tables_a_fusionner)
+                    regrouper_table(liste_tables_a_fusionner)
 
-                elif question == 2:
-                    pass
+                elif question == "2":
+                    liste_tables_a_defusionner = fusion_table()
+                    defusionner_table(liste_tables_a_defusionner)
+
                 else:
+                    print("erreur")
                     ValueError("Erreur lors de la fusion ou de la défusion")
 
             elif demande == 6:

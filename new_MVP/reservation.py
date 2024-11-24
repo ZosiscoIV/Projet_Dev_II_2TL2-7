@@ -19,32 +19,32 @@ class Reservation:
     @property
     def client(self):
         """
-        Retourne le numéro de commande
-        POST : Retourne  le numéro de commande
+        Retourne l'objet client
+        POST : Retourne  l'objet client
         """
         return self._client
 
     @property
     def rdv(self):
         """
-        Retourne le numéro de commande
-        POST : Retourne  le numéro de commande
+        Retourne la date et heure du rendez vous
+        POST : Retourne  la date et heure du rendez vous
         """
         return self._rdv
 
     @property
     def nbr_pers(self):
         """
-        Retourne le numéro de commande
-        POST : Retourne  le numéro de commande
+        Retourne le nombre de personnes de la reservation
+        POST : Retourne  le nombre de personnes
         """
         return self._nbr_pers
 
     @property
     def num_table(self):
         """
-        Retourne le numéro de commande
-        POST : Retourne  le numéro de commande
+        Retourne le numéro de table de la reservation
+        POST : Retourne  le numéro de table
         """
         return self._num_table
 
