@@ -1,5 +1,9 @@
 from commande import Commande
 
+
+class TableUnavailableError(Exception):
+    pass
+
 # def regrouper_table(table):
 #     """
 #     Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
@@ -46,7 +50,7 @@ class Table:
         self._etat_table = etat_table
         self._commande = commande
         self._table_merged = [] # Tables fusionnées avec la Table en question
-        nbr_place_max = nbr_place
+        self.nbr_place_max = nbr_place
 
     @property
     def nbr_place(self):
@@ -119,28 +123,62 @@ class Table:
         else:
             raise TypeError("La commande doit être une instance de Commande")
 
-    def regrouper_table(self, table):
-        plus_petit_num_table = self  # Table avec le plus petit num_table
-        table_to_merge = [self]  # tableau des Tables à fusionner
-        for i in table:
-            table_to_merge.append(i)
-            if i.num_table < plus_petit_num_table.num_table:
-                plus_petit_num_table = i
-        place_en_plus = 0  # place des tables à regrouper
-        for i in table_to_merge:
-            if i.num_table != plus_petit_num_table.num_table:
-                place_en_plus += i.nbr_place
-                i.nbr_place -= i.nbr_place
-                i.etat_table = "F"
-                self._table_merged.append(i)
-        plus_petit_num_table.nbr_place += place_en_plus  # Rajout des places récupérées à la Table "Principale"
+    @property
+    def table_merged(self):
+        """
+        Retourne les tables fusionnées avec la table
+        POST : Retourne une liste des tables qui ont été fusionnées avec la table
+        """
+        return self._table_merged
 
-    def defusionner_table(self, table):
-        table_to_merge = [self]  # tableau des Tables à fusionner
+    def regrouper_table(self, table):
+        """
+        Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
+
+        PRE : table est une liste d'objets Table qui n'est pas déjà fusionné avec d'autres tables.
+        POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
+        RAISE : ValueError lorsqu'une table n'est pas de type Table.
+        RAISE : TableUnavailableError lorsqu'une table n'a pas l'état Libre ou n'a pas de places disponibles.
+        """
+
         for i in table:
-            table_to_merge.append(i)
-        for i in self._table_merged:
+            if i.etat_table != "L" or i.nbr_place == 0:
+                raise TableUnavailableError("La table n'est pas disponible")
+            else:
+                i.etat_table = "F"
+                self.nbr_place += i.nbr_place
+                i.nbr_place = 0
+                self.table_merged.append(i)
+
+
+        # plus_petit_num_table = self  # Table avec le plus petit num_table
+        # table_to_merge = [self]  # tableau des Tables à fusionner
+        # for i in table:
+        #     table_to_merge.append(i)
+        #     if i.num_table < plus_petit_num_table.num_table:
+        #         plus_petit_num_table = i
+        # place_en_plus = 0  # place des tables à regrouper
+        # for i in table_to_merge:
+        #     if i.num_table != plus_petit_num_table.num_table:
+        #         place_en_plus += i.nbr_place
+        #         i.nbr_place -= i.nbr_place
+        #         i.etat_table = "F"
+        #         self._table_merged.append(i)
+        # plus_petit_num_table.nbr_place += place_en_plus  # Rajout des places récupérées à la Table "Principale"
+
+    def defusionner_table(self):
+        for i in self.table_merged:
+            self.nbr_place -= i.nbr_place_max
+            i.nbr_place = i.nbr_place_max
             i.etat_table = "L"
-            i.nbr_place = int(self.nbr_place / (len(self._table_merged) + 1))
-        self.nbr_place = int(self.nbr_place / (len(self._table_merged) + 1))
         self._table_merged = []
+
+
+        # table_to_merge = [self]  # tableau des Tables à fusionner
+        # for i in table:
+        #     table_to_merge.append(i)
+        # for i in self._table_merged:
+        #     i.etat_table = "L"
+        #     i.nbr_place = int(self.nbr_place / (len(self._table_merged) + 1))
+        # self.nbr_place = int(self.nbr_place / (len(self._table_merged) + 1))
+        # self._table_merged = []

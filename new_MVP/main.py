@@ -95,36 +95,50 @@ def trouver_reservation():
     res = None
     nom_client_pour_changer_sa_reservation = input("Entrez le nom du client\n")
     # Vérification du nom
-    verif = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
-    while verif.upper() != "O":
+    verification = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
+    while verification.upper() != "O":
         nom_client_pour_changer_sa_reservation = input("Entrez à nouveau le nom du client\n")
-        verif = input(
-            f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
+        verification = input(f"Etes vous sûr du nom \033[4m{nom_client_pour_changer_sa_reservation}\033[0m : O-oui, N-non\n")
     # Recherche l'objet de la reservation dont le nom a été donné
-    for i in reservations:
-        if i.client.nom == nom_client_pour_changer_sa_reservation:
-            res = i
+    for reserva in reservations:
+        if reserva.client.nom == nom_client_pour_changer_sa_reservation:
+            res = reserva
             break
     return res
 
-def fusion_table():
-    liste_tables= []
-    while True:
-        n = input("Entrez un numéro de table ou 'stop' pour arrêter\n ")
-        if n.lower() == "stop":
-            break
-        # Vérification que le numéro de table est valide
-        while not n.isdigit() or (int(n) <= 0 or int(n) > 20):
-            n = input("Numéro invalie, entrez un autre numéro de table ou 'stop' pour arrêter \n ")
-            if n.lower() == "stop":
-                break
-        if n.lower() == "stop":
-            break
-        for i in tables:
-            if i.num_table == int(n):
-                liste_tables.append(i)
-                break
-    return liste_tables
+# def fusion_table():
+#     liste_tables= []
+#     while True:
+#         n = input("Entrez un numéro de table ou 'stop' pour arrêter\n ")
+#         if n.lower() == "stop":
+#             break
+#         # Vérification que le numéro de table est valide
+#         while not n.isdigit() or (int(n) <= 0 or int(n) > 20):
+#             n = input("Numéro invalie, entrez un autre numéro de table ou 'stop' pour arrêter \n ")
+#             if n.lower() == "stop":
+#                 break
+#         if n.lower() == "stop":
+#             break
+#         for i in tables:
+#             if i.num_table == int(n):
+#                 liste_tables.append(i)
+#                 break
+#     return liste_tables
+
+
+def colorisation(etat, string):
+    if etat == "O":
+        return f"\033[31m{string}\033[0m" + ", "  # Rouge
+    elif etat == "L":
+        return f"\033[32m{string}\033[0m" + ", "  # Vert
+    elif etat == "N":
+        return f"\033[33m{string}\033[0m" + ", "  # Jaune
+    elif etat == "R":
+        return f"\033[34m{string}\033[0m" + ", "  # Bleu
+    elif etat == "F":
+        return f"\033[35m{string}\033[0m" + ", "  # Mauve
+    else:
+        return "Erreur de colorisation"
 
 
 # Boucle principale pour interagir avec l'utilisateur
@@ -155,18 +169,7 @@ while True:
 
         str_tables_a_afficher = ""
         for i in tables_a_afficher:
-            if str(i[1]) == "O":
-                str_tables_a_afficher += f"\033[31mTable{str(i[0])}\033[0m"  + ", " # Rouge
-            elif str(i[1]) == "L":
-                str_tables_a_afficher += f"\033[32mTable{str(i[0])}\033[0m"  + ", " # Vert
-            elif str(i[1]) == "N":
-                str_tables_a_afficher += f"\033[33mTable{str(i[0])}\033[0m"  + ", " # Jaune
-            elif str(i[1]) == "R":
-                str_tables_a_afficher += f"\033[34mTable{str(i[0])}\033[0m"  + ", " # Bleu
-            elif str(i[1]) == "F":
-                str_tables_a_afficher += f"\033[35mTable{str(i[0])}\033[0m"  + ", " # Mauve
-            else:
-                print("Erreur lors de l'affichage des tables")
+            str_tables_a_afficher += colorisation(i[1], f"Table{i[0]}")
         str_tables_a_afficher = str_tables_a_afficher[:-2]
         print(str_tables_a_afficher)
 
@@ -357,35 +360,69 @@ while True:
 
             # Fusion ou défusion d'une table
             elif demande == 5:
-                question = input("Voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
-                while question not in ["1", "2"]:
-                    question = input("Entrée invalide, voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
-                if question == "1":
-                    while True:
-                        table_a_fuse = choix_table()
-                        table_a_merge = []
-                        table_a_merge = set(table_a_merge)
-                        isDebile = False
+                while True:
+                    question = input("Voulez-vous 1) fusionner des tables 2) défusionner des tables 3) retour\n")
+                    while question not in ["1", "2", "3"]:
+                        question = input("Entrée invalide, voulez-vous 1) fusionner des tables 2) défusionner des tables 3) retour \n")
+                    if question == "1":
+                        verif = ""
                         while True:
-                            table_a_ajouter = choix_table("à fusionner ou stop pour quitter ")
-                            if table_a_ajouter == "stop":
+                            table_a_fuse = choix_table()
+                            num_tables_a_merge = []
+                            num_tables_a_merge = set(num_tables_a_merge)
+                            isDebile = False
+                            while True:
+                                table_a_ajouter = choix_table("à fusionner ou stop pour quitter ")
+                                if table_a_ajouter == "stop":
+                                    break
+                                if table_a_fuse == table_a_ajouter:
+                                    isDebile = True
+                                num_tables_a_merge.add(table_a_ajouter)
+                            if len(num_tables_a_merge) == 0:
+                                print("Aucune tables à fusionner")
                                 break
-                            if table_a_fuse == table_a_ajouter:
-                                isDebile = True
-                            table_a_merge.add(table_a_ajouter)
-                        if len(table_a_merge) == 0:
-                            print("Aucune tables à fusionner")
+                            if isDebile:
+                                num_tables_a_merge.remove(table_a_fuse)
+                            verif = input("Êtes vous sûr de vouloir fusionner la/les table(s) " + ', '.join(map(str, num_tables_a_merge)) + " à la table " + str(table_a_fuse) + " : O-oui, N-non \n")
                             break
-                        if isDebile:
-                            table_a_merge.remove(table_a_fuse)
-                        verif = input("Êtes vous sûr de vouloir fusionner la/les table(s) " + ', '.join(map(str, table_a_merge)) + " à la table " + str(table_a_fuse) + " : O-oui, N-non \n")
                         if verif.upper() == "O":
-                            break
-                    tables[table_a_fuse - 1].regrouper_table(table_a_merge)
-                    print("Les tables ont bien été fusionnées")
+                            tables_a_merge = []
+                            for i in num_tables_a_merge:
+                                tables_a_merge.append(tables[i-1])
+                            tables[table_a_fuse - 1].regrouper_table(tables_a_merge)
+                            print("Les tables ont bien été fusionnées")
+                        else:
+                            print("fusion annulée")
 
-                elif question == "2":
-                    pass
+                    elif question == "2":
+                        table_defusable = []
+                        for i in tables:
+                            if len(i.table_merged) != 0:
+                                table_defusable.append(i)
+                        str_defusable = ""
+                        table_possible = []
+                        for i in table_defusable:
+                            table_possible.append(i.num_table)
+                            str_defusable += colorisation(i.etat_table, str(i.num_table)) + ', '.join(map(lambda x: str(x.num_table), i.table_merged)) + "\n"
+                        if len(table_possible):
+
+                            print(str_defusable)
+                            num_defuse = input("Entrer le numero d'une table à défusionner ou stop pour arreter : \n")
+                            while not num_defuse.isdigit() or int(num_defuse) not in table_possible:
+                                if num_defuse == "stop":
+                                    break
+                                num_defuse = input("Numero invalide, entrez le numero d'une table à défusionner ou stop pour arreter : \n")
+                            if num_defuse != "stop":
+                                tables[int(num_defuse) - 1].defusionner_table()
+
+                    elif question == "3":
+                        break
+
+                    else:
+                        raise ValueError("l'action sélectionnée est invalide")
+
+
+
                     # table_a_fuse = choix_table("")
                     # table_a_merge = []
                     # while True:
