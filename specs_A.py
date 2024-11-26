@@ -76,21 +76,21 @@ def etat_plat(self, etat):
         raise ValueError("L'état du plat doit être 'C-commandé', 'P-préparé' ou 'S-servi'.")
 
 #5
-    def regrouper_table(self, table):
-        """
-        Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
+def regrouper_table(self, table):
+    """
+    Fusionne plusieurs tables en une seule, augmentant le nombre de places disponibles.
 
-        PRE : table est une liste d'objets Table qui n'est pas déjà fusionné avec d'autres tables.
-        POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
-        RAISE : ValueError lorsqu'une table n'est pas de type Table.
-        RAISE : TableUnavailableError lorsqu'une table n'a pas l'état Libre ou n'a pas de places disponibles.
-        """
+    PRE : table est une liste d'objets Table qui n'est pas déjà fusionné avec d'autres tables.
+    POST : Fusionne les tables en une seule avec le nombre total de places, et change l'état des tables fusionnées à 'fusionné'.
+    RAISE : ValueError lorsqu'une table n'est pas de type Table.
+    RAISE : TableUnavailableError lorsqu'une table n'a pas l'état Libre ou n'a pas de places disponibles.
+    """
 
-        for i in table:
-            if i.etat_table != "L" or i.nbr_place == 0:
-                raise TableUnavailableError("La table n'est pas disponible")
-            else:
-                i.etat_table = "F"
-                self.nbr_place += i.nbr_place
-                i.nbr_place = 0
-                self.table_merged.append(i)
+    for i in table:
+        if i.etat_table != "L" or i.nbr_place == 0:
+            raise TableUnavailableError("La table n'est pas disponible")
+        else:
+            i.etat_table = "F"
+            self.nbr_place += i.nbr_place
+            i.nbr_place = 0
+            self.table_merged.append(i)
