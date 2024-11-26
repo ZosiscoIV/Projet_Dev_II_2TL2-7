@@ -26,7 +26,7 @@ class Commande:
         """
         Retourne l'état actuel de la commande.
 
-        PRE : La commande doit exister et son état doit être valide.
+        PRE :
         POST : Retourne l'état actuel de la commande ('C' pour Commandée, 'P' pour Prête).
         """
         return self._etat_commande
@@ -36,7 +36,7 @@ class Commande:
         """
         Modifie l'état de la commande.
 
-        PRE : etat doit être une chaîne de caractères valide ('C' ou 'P').
+        PRE :
         POST : Modifie l'état de la commande en fonction de la valeur donnée.
         RAISE : ValueError si etat n'est pas une chaine de caractères compris dans "C" ou "P"
         """
@@ -57,7 +57,7 @@ class Commande:
         """
         Ajoute un plat à la commande.
 
-        PRE : plat est un objet de type Plat valide.
+        PRE :
         POST : Ajoute le plat à la liste des plats de la commande.
         RAISE : ValueError si le plat fourni n'est pas de type Plat.
         """
@@ -67,8 +67,8 @@ class Commande:
             raise ValueError("Le plat fourni n'est pas de type Plat, il est donc invalide.")
 
     def retirer_plat(self, index_plat):
-        """ Retire un plat de la commande
-        PRE : index_plat est un entier donnant la position du plat à retirer dans la liste des plats et ne peut pas être plus petit que 0 ou plus grand que la longueur de la liste plats
+        """ Retire un plat de la commande en donnant son index
+        PRE :
         POST : enlève le plat de la liste à l'indice donné
         RAISE : IndexError si l'indice est plus petit que 0 ou plus grand que la longueur de la liste plats
         """

@@ -55,7 +55,7 @@ class Plat:
         """
         Retourne l'état actuel du plat.
 
-        PRE : L'état du plat doit être valide.
+        PRE :
         POST : Retourne l'état actuel du plat ('C' pour Commandé, 'P' pour Préparé, 'S' pour Servi).
         """
         return self._etat_plat
@@ -65,7 +65,7 @@ class Plat:
         """
         Modifie l'état du plat.
 
-        PRE : etat doit être une chaîne de caractères valide ('C' pour Commandé, 'P' pour Préparé, 'S' pour Servi).
+        PRE :
         POST : Modifie l'état du plat en fonction de la valeur donnée.
         RAISE : ValueError si etat n'est pas une chaine de caractères compris dans "C", "P" ou "S"
         """
