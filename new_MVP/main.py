@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from table import Table, regrouper_table, defusionner_table
+from table import Table #, regrouper_table, defusionner_table
 from commande import Commande
 from plat import Plat
 from client import Client
@@ -40,12 +40,16 @@ for i in range(1, 21):
     tables.append(table)
 
 # Choix de la table
-def choix_table():
-    num = input("Entrez un numéro de table : ")
+def choix_table(mes=""):
+    num = input(f"Entrez un numéro de table {mes}: ")
     # Vérification que le numéro de table est valide
     while not num.isdigit() or (int(num) <= 0 or int(num) > 20):
-        num = input("Numéro invalie, entrez un autre numéro de table : ")
+        if mes:
+            if num == "stop":
+                return num
+        num = input(f"Numéro invalie, entrez un autre numéro de table {mes}: ")
     return int(num)
+
 
 # Choix du moment de la réservation
 def choix_rdv():
@@ -357,17 +361,54 @@ while True:
                 while question not in ["1", "2"]:
                     question = input("Entrée invalide, voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
                 if question == "1":
-                    liste_tables_a_fusionner = fusion_table()
-                    print(liste_tables_a_fusionner)
-                    regrouper_table(liste_tables_a_fusionner)
+                    while True:
+                        table_a_fuse = choix_table()
+                        table_a_merge = []
+                        table_a_merge = set(table_a_merge)
+                        isDebile = False
+                        while True:
+                            table_a_ajouter = choix_table("à fusionner ou stop pour quitter ")
+                            if table_a_ajouter == "stop":
+                                break
+                            if table_a_fuse == table_a_ajouter:
+                                isDebile = True
+                            table_a_merge.add(table_a_ajouter)
+                        if len(table_a_merge) == 0:
+                            print("Aucune tables à fusionner")
+                            break
+                        if isDebile:
+                            table_a_merge.remove(table_a_fuse)
+                        verif = input("Êtes vous sûr de vouloir fusionner la/les table(s) " + ', '.join(map(str, table_a_merge)) + " à la table " + str(table_a_fuse) + " : O-oui, N-non \n")
+                        if verif.upper() == "O":
+                            break
+                    tables[table_a_fuse - 1].regrouper_table(table_a_merge)
+                    print("Les tables ont bien été fusionnées")
 
                 elif question == "2":
-                    liste_tables_a_defusionner = fusion_table()
-                    defusionner_table(liste_tables_a_defusionner)
+                    pass
+                    # table_a_fuse = choix_table("")
+                    # table_a_merge = []
+                    # while True:
+                    #     table_a_ajouter = choix_table("à fusionner ou stop pour quitter ")
 
-                else:
-                    print("erreur")
-                    ValueError("Erreur lors de la fusion ou de la défusion")
+
+
+
+                # question = input("Voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
+                # while question not in ["1", "2"]:
+                #     question = input("Entrée invalide, voulez-vous 1) fusionner des tables 2) défusionner des tables \n")
+                # if question == "1":
+                #     liste_tables_a_fusionner = fusion_table()
+                #
+                #     liste_tables_a_fusionner[0].regrouper_table(liste_tables_a_fusionner[1:])
+                #
+                # elif question == "2":
+                #     liste_tables_a_defusionner = fusion_table()
+                #     liste_tables_a_defusionner[0].defusionner_table(liste_tables_a_defusionner[1:])
+                #
+                # else:
+                #     print("erreur")
+                #     ValueError("Erreur lors de la fusion ou de la défusion")
 
             elif demande == 6:
                 break
