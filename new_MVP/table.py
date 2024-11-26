@@ -63,7 +63,7 @@ class Table:
     @nbr_place.setter
     def nbr_place(self, places):
         """ Change le nombre de place d'une table
-        PRE : places est un entier positif
+        PRE :
         POST : modifie le nombre de place à une table
         Raise : ValueError si places est plus petit que 0 ou n'est pas un entier
         """
@@ -84,7 +84,7 @@ class Table:
     @etat_table.setter
     def etat_table(self, etat):
         """ Change l'état d'une table
-        PRE : etat est un carractère dans ["O", "L", "N", "R", "F"]
+        PRE :
         POST : modifie l'état de la table
         Raise : ValueError si l'état est pas l'un de ces caractères ["O", "L", "N", "R", "F"]
         """
@@ -114,7 +114,7 @@ class Table:
     @commande.setter
     def commande(self, new_commande):
         """ Associe à la table une commande
-        PRE : new_commande est un objet Commande
+        PRE :
         POST : associe new_commande à la table
         RAISE : TypeError si new_commande n'est pas une instance de Commande
         """
@@ -167,6 +167,11 @@ class Table:
         # plus_petit_num_table.nbr_place += place_en_plus  # Rajout des places récupérées à la Table "Principale"
 
     def defusionner_table(self):
+        """
+        Defusionne des tables fusionnées ensemble
+
+        POST: les tables dans table_merged sont défusionnées de la table
+        """
         for i in self.table_merged:
             self.nbr_place -= i.nbr_place_max
             i.nbr_place = i.nbr_place_max

@@ -50,10 +50,9 @@ class Reservation:
 
     def modifier(self, rdv = None, nbr_pers = None):
         """ Modifie une réservation
-        PRE : rdv est une date et par défaut elle garde sa valeur actuelle
-              nbr_pers est un entier positif ou nul et par défaut elle garde sa valeur actuelle
+        PRE :
         POST : change le rdv et/ou nbr_pers
-        RAISE : ValueError si rdv n'est pas une date et le nombre de personne est négatif ou pas un entier
+        RAISE : ValueError si rdv n'est pas une date ou le nombre de personne est négatif ou pas un entier
         """
         if rdv is None:
             rdv = self._rdv

@@ -33,7 +33,7 @@ class Plat:
         """
         Retire un ingrédient de la liste des ingrédients du plat.
 
-        PRE : nom est une chaîne de caractères représentant l'ingrédient à retirer.
+        PRE : nom est une chaîne de caractères représentant un ingrédient à retirer.
         POST : Retire l'ingrédient spécifié de la liste des ingrédients du plat, si celui-ci existe.
         RAISE : ValueError si l'ingrédient n'est pas du bon type ou pas dans la liste des ingrédients du plat.
         """
