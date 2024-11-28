@@ -1,5 +1,3 @@
-from lib2to3.fixer_util import Comma
-
 from plat import Plat
 
 
