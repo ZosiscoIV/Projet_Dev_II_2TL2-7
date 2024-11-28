@@ -1,15 +1,23 @@
+from lib2to3.fixer_util import Comma
+
 from plat import Plat
 
 
 class Commande:
-    def __init__(self,num_commande, etat_commande= "C"):
+    compteur = 1
+
+    @staticmethod
+    def increment_compteur():
+        Commande.compteur += 1
+
+    def __init__(self, etat_commande= "C"):
         """
         Initialise une commande
         PRE : num_commande est un entier positif
               etat_commande est un caractère ("C" pour commandée, "P" pour prête)
         POST : Crée une instance de Commande
         """
-        self._num_commande = num_commande
+        self._num_commande = Commande.compteur
         self._etat_commande = etat_commande # commande et pret
         self._plats = []
 

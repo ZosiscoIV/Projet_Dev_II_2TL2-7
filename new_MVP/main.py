@@ -15,9 +15,6 @@ tables = []
 reservations = []
 
 
-# Compteur pour le numero de commande
-compteur_commande = 1
-
 # annee_actuelle
 annee_actuelle = datetime.now().year
 
@@ -180,10 +177,10 @@ while True:
 
         # Créer la Commande au numéro de table si elle n'existe pas ou la récupérer
         if tables[numero_table-1].commande is None:
-            commande = Commande(compteur_commande)
+            commande = Commande()
             tables[numero_table-1].commande = commande
             # Augmenter le compteur du numéro de commande
-            compteur_commande += 1
+            Commande.increment_compteur()
         else:
             commande = tables[numero_table-1].commande
 
