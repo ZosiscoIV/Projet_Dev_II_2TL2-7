@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk
+from PIL import Image, ImageTk  # Pillow for image handling
 
 
 class RestaurantManager:
@@ -9,209 +10,144 @@ class RestaurantManager:
         self.master.geometry("800x600")
 
         # Data
-        self.tables = {i: {"status": "libre", "orders": []} for i in range(1, 21)}
-        self.reservations = []
-        self.current_view = "tables"
+        self.tables = {i: {"status": "libre"} for i in range(1, 21)}
+        self.status_colors = {
+            "libre": "green",
+            "occupée": "red",
+            "nettoyage": "yellow",
+            "réservée": "blue",
+            "fusionnée": "purple"
+        }
 
-        # Layout
-        self.menu_buttons()
-        self.content_frame = tk.Frame(self.master)
+        # Store images to prevent garbage collection
+        self.images = {}
+
+        # Layout (centrer le canvas)
+        self.main_frame = tk.Frame(self.master, bg="white")
+        self.main_frame.pack(expand=True, fill=tk.BOTH)
+
+        # Canvas pour afficher les tables
+        self.content_frame = tk.Canvas(self.main_frame, bg="white")
         self.content_frame.pack(expand=True, fill=tk.BOTH)
-        self.update_view()
 
-    def menu_buttons(self):
-        """Create top navigation buttons."""
-        menu_frame = tk.Frame(self.master)
-        menu_frame.pack(fill=tk.X)
+        # Affichage des tables
+        self.view_tables()
 
-        tk.Button(menu_frame, text="Tables", command=lambda: self.switch_view("tables")).pack(side=tk.LEFT, padx=5)
-        tk.Button(menu_frame, text="Réservations", command=lambda: self.switch_view("reservations")).pack(side=tk.LEFT,
-                                                                                                          padx=5)
-        tk.Button(menu_frame, text="Commandes", command=lambda: self.switch_view("orders")).pack(side=tk.LEFT, padx=5)
-
-    def switch_view(self, view):
-        """Change the active view."""
-        self.current_view = view
-        self.update_view()
-
-    def update_view(self):
-        """Refresh content based on the current view."""
-        for widget in self.content_frame.winfo_children():
-            widget.destroy()
-
-        if self.current_view == "tables":
-            self.view_tables()
-        elif self.current_view == "reservations":
-            self.view_reservations()
-        elif self.current_view == "orders":
-            self.view_orders()
+        # Contrôles pour changer manuellement l'état des tables
+        self.control_frame = tk.Frame(self.master, bg="white")
+        self.control_frame.pack(fill=tk.X, pady=10)
+        self.add_controls()
 
     def view_tables(self):
-        """Display tables and their statuses."""
-        # Créer un cadre pour contenir les tables et le centrer
-        table_frame = tk.Frame(self.content_frame)
-        table_frame.pack(expand=True)
+        """Display tables on a tiled background."""
+        # Draw the tiled background
+        self.draw_tiled_background()
 
-        # Créer une grille pour les tables (4 lignes x 5 colonnes)
-        row = 0
-        col = 0
-        for table, data in self.tables.items():
-            btn = tk.Button(
-                table_frame,
-                text=f"Table {table}\n{data['status']}",
-                bg=self.get_table_color(data['status']),
-                command=lambda t=table: self.change_table_status(t),
-                width=15, height=3
-            )
-            btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+        # Draw tables
+        x, y = 50, 50
+        for table_number in self.tables:
+            self.draw_table(x, y, table_number)
+            x += 150
+            if x > 650:  # Move to next row
+                x = 50
+                y += 150
 
-            # Passer à la colonne suivante
-            col += 1
-            # Si la colonne atteint 5, on passe à la ligne suivante
-            if col == 5:
-                col = 0
-                row += 1
+    def draw_tiled_background(self):
+        """Draw the tiled background (checkerboard pattern)."""
+        tile_size = 50
+        for i in range(0, 800, tile_size):
+            for j in range(0, 600, tile_size):
+                color = "lightgray" if (i // tile_size + j // tile_size) % 2 == 0 else "white"
+                self.content_frame.create_rectangle(i, j, i + tile_size, j + tile_size, fill=color, outline="")
 
-        # Faire en sorte que les colonnes et lignes occupent tout l'espace disponible, mais avec une taille contrôlée
-        for i in range(4):  # 4 lignes
-            table_frame.grid_rowconfigure(i, weight=1)
-        for i in range(5):  # 5 colonnes
-            table_frame.grid_columnconfigure(i, weight=1)
+    def draw_table(self, x, y, table_number):
+        """Draw a table with an image background and a color overlay."""
+        status = self.tables[table_number]["status"]
 
-    def view_reservations(self):
-        """Display and manage reservations."""
-        # Afficher les réservations existantes
-        for res in self.reservations:
-            res_frame = tk.Frame(self.content_frame)
-            res_frame.pack(pady=5)
+        # Draw the table image (wood texture or similar)
+        table_image = Image.open("table.png")  # Replace with your image path
+        table_image = table_image.resize((100, 100))  # Resize if necessary
+        table_photo = ImageTk.PhotoImage(table_image)
+        self.images[table_number] = table_photo  # Keep a reference to avoid garbage collection
 
-            tk.Label(res_frame, text=f"Client: {res['client']} - Table: {res['table']} - Date: {res['date']} - "
-                                     f"Heure: {res['time']} - Tél: {res['phone']}").pack(side=tk.LEFT, padx=5)
+        # Draw the table image
+        self.content_frame.create_image(x + 50, y + 50, image=table_photo, anchor="center", tags=f"table_{table_number}")
 
-            # Boutons "Modifier" et "Annuler"
-            tk.Button(res_frame, text="Modifier", command=lambda r=res: self.modify_reservation(r)).pack(side=tk.LEFT,
-                                                                                                          padx=5)
-            tk.Button(res_frame, text="Annuler", command=lambda r=res: self.cancel_reservation(r)).pack(side=tk.LEFT,
-                                                                                                        padx=5)
+        # Add a colored overlay with simulated transparency
+        color = self.get_table_color(status)
+        self.content_frame.create_rectangle(
+            x, y, x + 100, y + 100,
+            fill=color, stipple="gray50", outline="", tags=f"table_{table_number}"
+        )
 
-        # Formulaire pour ajouter une réservation
-        add_res_frame = tk.Frame(self.content_frame)
-        add_res_frame.pack(pady=20)
+        # Add table number
+        self.content_frame.create_text(
+            x + 50, y + 50,
+            text=f"Table {table_number}",
+            fill="white",
+            font=("Arial", 12, "bold"),
+            tags=f"table_{table_number}"
+        )
 
-        tk.Label(add_res_frame, text="Nom du client:").pack(side=tk.LEFT, padx=5)
-        self.client_entry = tk.Entry(add_res_frame)
-        self.client_entry.pack(side=tk.LEFT, padx=5)
-
-        tk.Label(add_res_frame, text="Table:").pack(side=tk.LEFT, padx=5)
-        self.table_entry = tk.Entry(add_res_frame, width=5)
-        self.table_entry.pack(side=tk.LEFT, padx=5)
-
-        tk.Label(add_res_frame, text="Date (JJ/MM/AAAA):").pack(side=tk.LEFT, padx=5)
-        self.date_entry = tk.Entry(add_res_frame, width=10)
-        self.date_entry.pack(side=tk.LEFT, padx=5)
-
-        tk.Label(add_res_frame, text="Heure (HH:MM):").pack(side=tk.LEFT, padx=5)
-        self.time_entry = tk.Entry(add_res_frame, width=8)
-        self.time_entry.pack(side=tk.LEFT, padx=5)
-
-        tk.Label(add_res_frame, text="Numéro de téléphone:").pack(side=tk.LEFT, padx=5)
-        self.phone_entry = tk.Entry(add_res_frame, width=15)
-        self.phone_entry.pack(side=tk.LEFT, padx=5)
-
-        tk.Button(add_res_frame, text="Ajouter", command=self.add_reservation).pack(side=tk.LEFT, padx=5)
-
-    def view_orders(self):
-        """Display and manage orders."""
-        tk.Label(self.content_frame, text="Section commandes à venir...").pack(pady=10)
+        # Bind click event to the table
+        self.content_frame.tag_bind(f"table_{table_number}", "<Button-1>", lambda event, t=table_number: self.change_table_status(t))
 
     def get_table_color(self, status):
         """Return the color representing table status."""
-        return {"libre": "green", "occupée": "red", "réservée": "yellow"}.get(status, "gray")
+        return self.status_colors.get(status, "gray")
 
     def change_table_status(self, table):
         """Change the status of a table."""
         current_status = self.tables[table]["status"]
-        next_status = {"libre": "occupée", "occupée": "réservée", "réservée": "libre"}
+        next_status = {
+            "libre": "occupée",
+            "occupée": "nettoyage",
+            "nettoyage": "libre",
+            "réservée": "occupée",
+            "fusionnée": "libre"
+        }
         self.tables[table]["status"] = next_status[current_status]
-        self.update_view()
+        self.refresh_tables()
 
-    def add_reservation(self):
-        """Add a new reservation after confirmation."""
-        client = self.client_entry.get()
+    def refresh_tables(self):
+        """Refresh the tables view to update colors and statuses."""
+        self.content_frame.delete("all")
+        self.view_tables()
+
+    def add_controls(self):
+        """Add manual controls for changing table statuses."""
+        tk.Label(self.control_frame, text="Numéro de table:", bg="white").pack(side=tk.LEFT, padx=5)
+        self.table_entry = tk.Entry(self.control_frame, width=5)
+        self.table_entry.pack(side=tk.LEFT, padx=5)
+
+        tk.Label(self.control_frame, text="Statut:", bg="white").pack(side=tk.LEFT, padx=5)
+        self.status_selector = ttk.Combobox(
+            self.control_frame,
+            values=list(self.status_colors.keys()),
+            state="readonly",
+            width=10
+        )
+        self.status_selector.pack(side=tk.LEFT, padx=5)
+        self.status_selector.current(0)  # Set default selection to "libre"
+
+        tk.Button(
+            self.control_frame,
+            text="Appliquer",
+            command=self.apply_status_change
+        ).pack(side=tk.LEFT, padx=10)
+
+    def apply_status_change(self):
+        """Apply the selected status to the specified table."""
         try:
-            table = int(self.table_entry.get())
-            date = self.date_entry.get()
-            time = self.time_entry.get()
-            phone = self.phone_entry.get()
-
-            # Vérifier si les champs sont remplis
-            if not client or not date or not time or not phone:
-                messagebox.showerror("Erreur", "Tous les champs doivent être remplis.")
-                return
-
-            # Confirmation des informations avant ajout
-            confirm_msg = f"Confirmer la réservation ?\nClient: {client}\nTable: {table}\nDate: {date}\nHeure: {time}\nTél: {phone}"
-            if messagebox.askyesno("Confirmation", confirm_msg):
-                if table in self.tables and self.tables[table]["status"] == "libre":
-                    self.reservations.append({"client": client, "table": table, "date": date, "time": time, "phone": phone})
-                    self.tables[table]["status"] = "réservée"
-                    self.update_view()
-                else:
-                    messagebox.showerror("Erreur", "Table non disponible ou invalide.")
+            table_number = int(self.table_entry.get())
+            if table_number in self.tables:
+                selected_status = self.status_selector.get()
+                self.tables[table_number]["status"] = selected_status
+                self.refresh_tables()
+            else:
+                tk.messagebox.showerror("Erreur", "Numéro de table invalide.")
         except ValueError:
-            messagebox.showerror("Erreur", "Veuillez entrer un numéro de table valide.")
-
-    def cancel_reservation(self, reservation):
-        """Cancel an existing reservation."""
-        # Annuler la réservation
-        self.reservations.remove(reservation)
-        self.tables[reservation["table"]]["status"] = "libre"
-        self.update_view()
-
-    def modify_reservation(self, reservation):
-        """Modify an existing reservation."""
-        # Modifier une réservation
-        self.client_entry.delete(0, tk.END)
-        self.client_entry.insert(0, reservation["client"])
-
-        self.table_entry.delete(0, tk.END)
-        self.table_entry.insert(0, reservation["table"])
-
-        self.date_entry.delete(0, tk.END)
-        self.date_entry.insert(0, reservation["date"])
-
-        self.time_entry.delete(0, tk.END)
-        self.time_entry.insert(0, reservation["time"])
-
-        self.phone_entry.delete(0, tk.END)
-        self.phone_entry.insert(0, reservation["phone"])
-
-        # Changer le bouton "Ajouter" en "Mettre à jour"
-        add_button = tk.Button(self.content_frame, text="Mettre à jour", command=lambda: self.update_reservation(reservation))
-        add_button.pack(side=tk.LEFT, padx=5)
-
-    def update_reservation(self, reservation):
-        """Update an existing reservation."""
-        client = self.client_entry.get()
-        table = int(self.table_entry.get())
-        date = self.date_entry.get()
-        time = self.time_entry.get()
-        phone = self.phone_entry.get()
-
-        # Vérifier si les champs sont remplis
-        if not client or not date or not time or not phone:
-            messagebox.showerror("Erreur", "Tous les champs doivent être remplis.")
-            return
-
-        # Confirmation avant la mise à jour
-        confirm_msg = f"Confirmer la mise à jour de la réservation ?\nClient: {client}\nTable: {table}\nDate: {date}\nHeure: {time}\nTél: {phone}"
-        if messagebox.askyesno("Confirmation", confirm_msg):
-            reservation["client"] = client
-            reservation["table"] = table
-            reservation["date"] = date
-            reservation["time"] = time
-            reservation["phone"] = phone
-            self.update_view()
+            tk.messagebox.showerror("Erreur", "Veuillez entrer un numéro de table valide.")
 
 
 # Create the application
