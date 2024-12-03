@@ -11,6 +11,7 @@ from src.client import Client
 class TestMain(unittest.TestCase):
     def test_retirer_plat(self):
         com = Commande()
+        com_vide = Commande()
         plat1 = Plat("Bolo", ["Pate", "Bolo", "Persil"], 12.5)
         plat2 = Plat("Pizza", ["Pate","Tomate", "Fromage", "Jambon"], 9.7)
         plat3 = Plat("Steak", ["Steak", "Frites", "Salade", "Archiduc"], 27.1)
@@ -35,6 +36,8 @@ class TestMain(unittest.TestCase):
             com.retirer_plat(-1)
         with self.assertRaises(IndexError):
             com.retirer_plat(3)
+        with self.assertRaises(IndexError):
+            com_vide.retirer_plat(0)
 
 
     def test_nbr_place(self):
@@ -43,6 +46,7 @@ class TestMain(unittest.TestCase):
         nbr0 = 0
         nbr_negatif = -5
         nbr_virgule = 5.4
+        nbr_caract = "8"
         caract = 'ttt'
 
         table15.nbr_place = nbr
@@ -55,6 +59,8 @@ class TestMain(unittest.TestCase):
             table15.nbr_place = nbr_negatif
         with self.assertRaises(ValueError):
             table15.nbr_place = nbr_virgule
+        with self.assertRaises(ValueError):
+            table15.nbr_place = nbr_caract
         with self.assertRaises(ValueError):
             table15.nbr_place = caract
 
@@ -80,6 +86,10 @@ class TestMain(unittest.TestCase):
             table15.etat_table = etat_nbr_entier
         with self.assertRaises(ValueError):
             table15.etat_table = etat_nbr_virgule
+        with self.assertRaises(ValueError):
+            table15.etat_table = ""
+        with self.assertRaises(ValueError):
+            table15.etat_table = None
         
         self.assertEqual(table15.etat_table, "O")  # L'état reste le dernier valide
 
@@ -94,6 +104,7 @@ class TestMain(unittest.TestCase):
         com_nbr_virgule = 5.5
 
         table15.commande = com
+        self.assertIsInstance(table15.commande, Commande)
         self.assertEqual(table15.commande.etat_commande, "C")
         
         table15.commande = com_prete
@@ -105,22 +116,33 @@ class TestMain(unittest.TestCase):
             table15.commande = com_nbr_entier
         with self.assertRaises(TypeError):
             table15.commande = com_nbr_virgule
+        with self.assertRaises(TypeError):
+            table15.commande = None
         
         self.assertEqual(table15.commande.etat_commande, "P")  # L'état reste le dernier valide
 
 
     def test_modifier(self):
-        pass
         cl = Client("Gaston", "06848595")
+        self.assertEqual(cl.nom, "Gaston")
+        self.assertEqual(cl.phone, "06848595")
+
         res = Reservation(cl, datetime(2024, 12,5, 15,30), 4, 15)
+        self.assertEqual(res.rdv, datetime(2024, 12,5, 15,30))
+        self.assertEqual(res.nbr_pers, 4)
+        self.assertEqual(res.num_table, 15)
+
         date = datetime(2024, 12,6, 15,30)
         date2 = datetime(2024, 12,7, 15,30)
         nombre_per = 5
         nombre_per2 = 6
         nombre_per0 = 0
         date_invalide = 9
+        date_invalide_caract = "ttt"
         nombre_per_caract = "ttt"
         nombre_per_nbr_negatif = -5
+        nombre_per_nbr_virgule = 5.5
+
 
         res.modifier(rdv=date)
         self.assertEqual(res.rdv, datetime(2024, 12,6, 15,30))
@@ -138,9 +160,13 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(ValueError):
             res.modifier(rdv=date_invalide)
         with self.assertRaises(ValueError):
+            res.modifier(rdv=date_invalide_caract)
+        with self.assertRaises(ValueError):
             res.modifier(nbr_pers=nombre_per_caract)
         with self.assertRaises(ValueError):
             res.modifier(nbr_pers=nombre_per_nbr_negatif)
+        with self.assertRaises(ValueError):
+            res.modifier(nbr_pers=nombre_per_nbr_virgule)
         with self.assertRaises(ValueError):
             res.modifier(rdv=date_invalide, nbr_pers=nombre_per_nbr_negatif)
 
@@ -148,5 +174,5 @@ class TestMain(unittest.TestCase):
         self.assertEqual(res.nbr_pers, 6)
 
 
-# if __name__ == '__main__':
-#     unittest.main()
+if __name__ == '__main__':
+    unittest.main()
