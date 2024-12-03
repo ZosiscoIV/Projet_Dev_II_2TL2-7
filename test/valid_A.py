@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
 
-from table import Table
-from commande import Commande
+from src.table import Table
+from src.commande import Commande
 from plat import Plat
 from client import Client
 from reservation import Reservation
