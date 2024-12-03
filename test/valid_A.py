@@ -3,9 +3,9 @@ from datetime import datetime
 
 from src.table import Table
 from src.commande import Commande
-from plat import Plat
-from client import Client
-from reservation import Reservation
+from src.plat import Plat
+from src.client import Client
+from src.reservation import Reservation
 
 
 import unittest

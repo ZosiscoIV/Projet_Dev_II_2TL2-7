@@ -1,4 +1,4 @@
-from plat import Plat
+from .plat import Plat
 
 
 class Commande:
