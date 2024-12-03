@@ -1,11 +1,11 @@
 import unittest
 from datetime import datetime
 
-from commande import Commande
-from table import Table
-from reservation import Reservation
-from plat import Plat
-from client import Client
+from src.commande import Commande
+from src.table import Table
+from src.reservation import Reservation
+from src.plat import Plat
+from src.client import Client
 
 
 class TestMain(unittest.TestCase):
