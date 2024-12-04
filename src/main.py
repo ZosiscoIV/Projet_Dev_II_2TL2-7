@@ -179,8 +179,6 @@ while True:
         if tables[numero_table-1].commande is None:
             commande = Commande()
             tables[numero_table-1].commande = commande
-            # Augmenter le compteur du numéro de commande
-            Commande.increment_compteur()
         else:
             commande = tables[numero_table-1].commande
 

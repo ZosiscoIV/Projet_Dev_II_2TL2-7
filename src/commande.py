@@ -11,13 +11,15 @@ class Commande:
     def __init__(self, etat_commande= "C"):
         """
         Initialise une commande
-        PRE : num_commande est un entier positif
-              etat_commande est un caractère ("C" pour commandée, "P" pour prête)
+        PRE : etat_commande est un caractère (soit "C" pour commandée ou "P" pour prête)
         POST : Crée une instance de Commande
         """
         self._num_commande = Commande.compteur
         self._etat_commande = etat_commande # commande et pret
         self._plats = []
+        # Augmenter le compteur du numéro de commande
+        Commande.increment_compteur()
+
 
     @property
     def num_commande(self):
