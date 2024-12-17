@@ -1,0 +1,16 @@
+#!/bin/sh
+#!/bin/bash
+
+echo "Exécution des tests unitaires avant le commit..."
+
+# Exécute les tests unitaires avec unittest
+python -m unittest discover -s test -p "*.py"
+
+# Vérifie si les tests ont échoué
+if [ $? -ne 0 ]; then
+    echo "Des tests ont échoué. Annulation du commit."
+    exit 1
+fi
+
+echo "Tests réussis. Commit autorisé."
+exit 0
