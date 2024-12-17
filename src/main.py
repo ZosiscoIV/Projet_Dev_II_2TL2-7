@@ -9,6 +9,45 @@ from client import Client
 from reservation import Reservation
 
 
+def generer_reservations_par_client(nom):
+    """Générateur pour retourner les réservations pour un client donné."""
+    for res in reservations:
+        if res.client.nom == nom:
+            yield res
+
+
+def reservation_existe(func):
+    """Décorateur pour vérifier si un client possède déjà une réservation."""
+
+    def wrapper(*args, **kwargs):
+        nom = args[0]  # Le premier argument est le nom du client
+
+        # Utilisation du générateur pour vérifier s'il existe une réservation
+        for _ in generer_reservations_par_client(nom):
+            print(f"Le client {nom} a déjà une réservation.")
+            return None  # Si une réservation existe déjà, on arrête la fonction
+
+        return func(*args, **kwargs)  # Si aucune réservation n'est trouvée, on continue
+
+    return wrapper
+
+
+@reservation_existe
+def ajouter_reservation(nom_du_client,telephone, rdvous, quantite_personnes, numero_de_table):
+    """
+    Ajoute une réservation pour un client.
+    Utilise un décorateur pour vérifier s'il n'existe pas déjà de réservation.
+    """
+    # Création de l'intance client
+    client = Client(nom_du_client, telephone)
+    # Création de l'intance reservation
+    reser = Reservation(client, rdvous, quantite_personnes, numero_de_table)
+    # Ajout de la réservation à la liste des réservations
+    reservations.append(reser)
+    # Mettre l'état de la table en réservé
+    tables[numero_table - 1].etat_table = "R"
+
+
 # Liste pour stocker les tables
 tables = []
 
@@ -293,14 +332,15 @@ while True:
                 # Demande le numéro de table auquel il faut mettre la réservation
                 numero_table = choix_table()
 
-                # Création de l'intance client
-                client = Client(nom_client, tel)
-                # Création de l'intance reservation
-                reservation = Reservation(client,rdv,quantite_pers,numero_table)
-                # Ajout de la réservation à la liste des réservations
-                reservations.append(reservation)
-                # Mettre l'état de la table en réservé
-                tables[numero_table - 1].etat_table = "R"
+                ajouter_reservation(nom_client, tel,rdv, quantite_pers, numero_table)
+                # # Création de l'intance client
+                # client = Client(nom_client, tel)
+                # # Création de l'intance reservation
+                # reservation = Reservation(client,rdv,quantite_pers,numero_table)
+                # # Ajout de la réservation à la liste des réservations
+                # reservations.append(reservation)
+                # # Mettre l'état de la table en réservé
+                # tables[numero_table - 1].etat_table = "R"
 
             # Modification de la réservation
             elif demande == 2:
