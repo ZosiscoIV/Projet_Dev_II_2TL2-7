@@ -1,4 +1,4 @@
-from .commande import Commande
+from commande import Commande
 
 
 class TableUnavailableError(Exception):

@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import re
 
 from table import Table #, regrouper_table, defusionner_table
 from commande import Commande
@@ -265,10 +266,16 @@ while True:
                     verif_nom = input(f"Etes vous sûr du nom \033[4m{nom_client}\033[0m : O-oui, N-non\n")
 
                 # Demande le numéro de téléphone du client et vérification
+                regex_tel = r'^(\+32|0)[1-9](\d{2}){4}$'
                 tel = input("Entrez le numéro de téléphone du client\n")
+                while not re.match(regex_tel, tel):
+                    tel = input("Entrée invalide, entrez à nouveau le numéro de téléphone du client\n")
+
                 verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
                 while verif_tel.upper() != "O":
                     tel = input("Entrez à nouveau le numéro de téléphone du client\n")
+                    while not re.match(regex_tel, tel):
+                        tel = input("Entrée invalide, entrez à nouveau le numéro de téléphone du client\n")
                     verif_tel = input(f"Etes vous sûr du téléphone \033[4m{tel}\033[0m : O-oui, N-non\n")
 
                 # Demande les informations du rdv de la réservation et vérification
