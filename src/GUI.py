@@ -150,6 +150,7 @@ class RestaurantManager:
             tk.messagebox.showerror("Erreur", "Veuillez entrer un numéro de table valide.")
 
 
+
 # Create the application
 root = tk.Tk()
 app = RestaurantManager(root)
